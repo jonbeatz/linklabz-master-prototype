@@ -237,14 +237,6 @@
       border-radius: 26px 8px 26px 8px;
     }
 
-    .summary::before {
-      content: "";
-      position: absolute;
-      inset: 0 auto auto 0;
-      width: 44%;
-      height: 2px;
-      background: linear-gradient(90deg, var(--accent), transparent);
-    }
 
     .summary::after {
       content: "";
@@ -998,7 +990,6 @@
       cursor: pointer;
     }
     .command-result:hover, .command-result.active { background: rgba(255,255,255,.065); border-color: var(--line); }
-    .command-result.active { box-shadow: inset 3px 0 var(--accent); }
     .command-icon { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 8px; background: var(--cyan-soft); color: var(--cyan); font: 700 12px/1 "IBM Plex Mono", monospace; }
     .command-copy strong, .command-copy small { display: block; }
     .command-copy strong { font-size: 13px; }
@@ -1239,9 +1230,6 @@
       background: rgba(255,255,255,.045);
       box-shadow: inset 0 1px rgba(255,255,255,.04);
     }
-    .utility-card.bookmark { border-top-color: rgba(201,162,39,.48); }
-    .utility-card.idea { border-top-color: rgba(201,162,39,.5); }
-    .utility-card.task { border-top-color: rgba(82,71,72,.5); }
     .utility-card.is-done { opacity: .64; }
     .utility-card h3 { margin: 8px 0 8px; font-size: 18px; line-height: 1.2; }
     .utility-card p { margin: 0; color: var(--muted); font-size: 13px; }
@@ -1335,7 +1323,7 @@
         background: rgba(9, 10, 13, .78);
         -webkit-backdrop-filter: blur(20px) saturate(140%);
         backdrop-filter: blur(20px) saturate(140%);
-        border-bottom: 1px solid rgba(201, 162, 39, .22);
+        border-bottom: 1px solid var(--line-strong);
         border-radius: 0 0 20px 20px;
         box-shadow: 0 30px 70px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .05);
         transform: translateY(-14px);
@@ -1536,9 +1524,6 @@
     .lane[data-lane="parked"] .lane-mark { box-shadow: 0 0 14px rgba(201,162,39,.3); }
     .verdict-chip.inbox { border-color: rgba(201,162,39,.3); }
     .visual-anchor { border-color: rgba(201,162,39,.42); background: rgba(201,162,39,.14); color: var(--cyan); }
-    .utility-card.bookmark { border-top-color: rgba(201,162,39,.54); }
-    .utility-card.idea { border-top-color: rgba(201,162,39,.56); }
-    .utility-card.task { border-top-color: rgba(82,71,72,.56); }
     .delete-btn:hover { color: var(--danger); border-color: rgba(82,71,72,.38); background: var(--accent-soft); }
     .status-row[data-stage="done"] { --status-color: var(--try); --status-bg: var(--try-soft); }
     .hold-banner, .hold-stamp { border-color: rgba(82,71,72,.45); background: var(--accent-soft); color: var(--accent); }
@@ -1646,7 +1631,6 @@
 
     /* Distinct section headers: icon + accent rule */
     .utility-head { position: relative; border-bottom: 1px solid var(--line); padding-bottom: 14px; }
-    .utility-head::after { content: ""; position: absolute; left: 0; bottom: -1px; width: 76px; height: 2px; border-radius: 2px; background: linear-gradient(90deg, var(--sec-accent), transparent); }
     .utility-head h2 { display: flex; align-items: center; gap: 10px; }
     .utility-head h2::before { content: var(--sec-icon); font-size: .85em; filter: saturate(1.2); }
 
@@ -1764,7 +1748,7 @@
 
     /* ---- BOOKMARKS: "The Shelf" — tight favicon rows ---- */
     #bookmark-list { display: flex; flex-direction: column; gap: 10px; }
-    #bookmark-list .utility-card.bookmark { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 13px 16px; border-radius: 12px; border-left: 3px solid var(--sec-accent); }
+    #bookmark-list .utility-card.bookmark { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 13px 16px; border-radius: 12px; }
     #bookmark-list .utility-identity { margin: 0; flex: 1 1 220px; }
     #bookmark-list .utility-identity .visual-anchor { width: 38px; height: 38px; border-radius: 10px; font-size: 15px; border: 0; color: #fff; background: linear-gradient(135deg, #C9A227, #9C7E22); }
     #bookmark-list .utility-card.bookmark > p { flex: 1 1 100%; margin: 0; font-size: 13px; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
@@ -1781,9 +1765,7 @@
 
     /* ---- TO-DO: "The Queue" — checklist rows, priority edge ---- */
     #todo-list { display: flex; flex-direction: column; gap: 8px; }
-    #todo-list .utility-card.task { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 13px 16px 13px 18px; border-radius: 10px; border-left: 4px solid var(--sec-accent); }
-    #todo-list .utility-card.task:has(.priority-high) { border-left-color: #c9704f; }
-    #todo-list .utility-card.task:has(.priority-soon) { border-left-color: var(--accent-strong); }
+    #todo-list .utility-card.task { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 13px 16px; border-radius: 10px; }
     #todo-list .utility-identity { margin: 0; flex: 1 1 200px; }
     #todo-list .utility-identity .visual-anchor { border-radius: 50%; }
     #todo-list .todo-check { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 13px; }
