@@ -1311,7 +1311,7 @@
       .command-trigger { margin-left: auto; width: auto; min-height: 42px; padding: 0 9px; justify-content: center; }
       .command-trigger .command-label, .command-trigger kbd { display: inline; }
       .command-trigger svg { display: none; }
-      .nav-toggle { display: grid; margin-left: 0; position: relative; z-index: 62; }
+      .nav-toggle { display: grid; margin-left: 0; position: relative; z-index: 62; flex: 0 0 auto; }
       .workspace-tabs {
         position: fixed;
         top: 0;
@@ -1365,7 +1365,7 @@
       }
       .nav-group-label { flex: 1; }
       .nav-count { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--muted); }
-      .nav-chevron { flex: 0 0 auto; color: var(--muted); transition: transform .25s ease, color .25s ease; }
+      .nav-chevron { display: block; flex: 0 0 auto; color: var(--muted); transition: transform .25s ease, color .25s ease; }
       .nav-group.open .nav-chevron { transform: rotate(180deg); color: var(--accent); }
       .top-nav .nav-group-head.active {
         border-color: rgba(232, 163, 23, .55);
