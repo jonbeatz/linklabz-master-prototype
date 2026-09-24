@@ -1308,8 +1308,13 @@
       }
       .top-nav .brand-mark { width: 38px; height: 38px; flex-basis: 38px; }
       .top-nav .brand-name { font-size: 19px; }
-      .command-trigger { margin-left: auto; width: auto; min-height: 42px; padding: 0 9px; justify-content: center; }
-      .command-trigger .command-label, .command-trigger kbd { display: inline; }
+      .command-trigger { margin-left: auto; width: auto; min-height: 42px; padding: 0 9px; justify-content: center; flex: 0 1 auto; min-width: 0; }
+      .command-trigger .command-label { display: inline; }
+      .command-trigger kbd { display: none; }
+      .top-nav { gap: 8px; padding: 8px 8px 8px 12px; width: min(100% - 16px, 1460px); }
+      .top-nav .brand-name { font-size: 18px; }
+      .proto-badge { margin-left: 6px; padding: 3px 7px; }
+      .brand-lockup { min-width: 0; }
       .command-trigger svg { display: none; }
       .nav-toggle { display: grid; margin-left: 0; position: relative; z-index: 62; flex: 0 0 auto; }
       .workspace-tabs {
