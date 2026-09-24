@@ -65,3 +65,15 @@ data) is inherited unchanged from the Trinity reference.
   placement, PROTOTYPE badge, og meta, dark README hero (Playwright,
   colorScheme dark, 1440×900). Verified: 19/7/6/2 dataset, persistence across
   reload, mobile tab bar, no JS errors.
+
+- **2026-09-24** — Gold + gradient restyle (Trinity + Jon prototype). Deep-black
+  base (#0B0C0F) with animated drifting multi-gradient void background
+  (gold/amber/warm-brown radials, 38s drift, prefers-reduced-motion safe);
+  gold accent system (#E8A317, gradient #F6C453→#D98E1B) on stat pills, active
+  facet chips, List/Grid thumb, primary buttons, phone tab-bar active state,
+  card anchors, harvest tags. Typography switched to Ravyn's system: DM Sans
+  (display/headings/brand/numbers) + Mulish (body/UI), IBM Plex Mono kept for
+  tiny labels. Brand mark replaced with Ravyn's gold-diamond icon
+  (assets/ravyn-mark.svg). Single dark theme (OS light-mode can no longer flip
+  it). Mobile sticky-toolbar fix retained. Verified: desktop + mobile renders,
+  no JS errors, dataset + persistence untouched.
