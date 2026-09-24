@@ -1634,9 +1634,10 @@
     .proto-badge { background: var(--gold-gradient); color: #141414; }
     .top-nav { background: rgba(13, 14, 18, .84); }
     .toolbar { background: rgba(19, 21, 26, .88); }
-    .stat { background: linear-gradient(160deg, rgba(30, 33, 40, .94), rgba(13, 14, 18, .94)); position: relative; overflow: hidden; }
-    .stat::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: var(--gold-gradient); opacity: .6; }
+    .stat { background: rgba(16, 17, 22, .55); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); border: 1px solid rgba(255, 255, 255, .09); position: relative; overflow: hidden; }
+    .stat::after { display: none; }
     .stat:nth-child(1) .stat-value { background: var(--gold-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .gold-text { background: var(--gold-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
     .facet-button.active { background: var(--gold-gradient); border-color: transparent; color: #141414; font-weight: 800; }
     .facet-button.active .facet-x { color: #141414; }
     .view-switch::before { background: var(--gold-gradient); box-shadow: 0 4px 16px var(--gold-glow); }
@@ -1667,13 +1668,13 @@
     </button>
     <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Open navigation" aria-controls="workspace-nav" aria-expanded="false"><span class="nav-toggle-lines" aria-hidden="true"></span></button>
     <nav class="workspace-tabs" id="workspace-nav" aria-label="Workspace sections">
-      <button class="workspace-tab active" type="button" data-workspace="reviews">Reviews <span id="tab-reviews-count">8</span></button>
-      <button class="workspace-tab" type="button" data-workspace="bookmarks">Bookmarks <span id="tab-bookmarks-count">0</span></button>
-      <button class="workspace-tab" type="button" data-workspace="spitballs">Spitballs <span id="tab-spitballs-count">0</span></button>
-      <button class="workspace-tab" type="button" data-workspace="todos">To-do <span id="tab-todos-count">0</span></button>
-      <button class="workspace-tab" type="button" data-workspace="favorites">Favorites <span id="tab-favorites-count">0</span></button>
-      <button class="workspace-tab" type="button" data-workspace="gradients">Gradients <span>12</span></button>
-      <button class="workspace-tab" type="button" data-workspace="tools">Tools <span id="tab-tools-count">2</span></button>
+      <button class="workspace-tab active" type="button" data-workspace="reviews" title="Canonical home — decide where each review lives.">Reviews <span id="tab-reviews-count">8</span></button>
+      <button class="workspace-tab" type="button" data-workspace="bookmarks" title="Typed quick-saves when a full review ceremony is overkill.">Bookmarks <span id="tab-bookmarks-count">0</span></button>
+      <button class="workspace-tab" type="button" data-workspace="spitballs" title="Raw ideas before they deserve a lane.">Spitballs <span id="tab-spitballs-count">0</span></button>
+      <button class="workspace-tab" type="button" data-workspace="todos" title="Action queue tied to projects — severity, park, inline edit, clear done.">To-do <span id="tab-todos-count">0</span></button>
+      <button class="workspace-tab" type="button" data-workspace="favorites" title="Starred shortlist — reviews, bookmarks, and ideas you flagged.">Favorites <span id="tab-favorites-count">0</span></button>
+      <button class="workspace-tab" type="button" data-workspace="gradients" title="Saved gradient looks and experiments.">Gradients <span>12</span></button>
+      <button class="workspace-tab" type="button" data-workspace="tools" title="Manual spotlight of up to three tools — Card Swap UI lives here only, not on the main board.">Tools <span id="tab-tools-count">2</span></button>
     </nav>
   </header>
   <div class="nav-scrim" id="nav-scrim" aria-hidden="true"></div>
@@ -1685,8 +1686,8 @@
           <div class="signal"><span class="signal-dot" aria-hidden="true"></span> Review queue · Sep 23, 2026</div>
         </div>
         <div>
-          <h1 id="summary-title">Decide what to build—and what to borrow.</h1>
-          <p>Every link gets a verdict, the useful parts get harvested, and only the strongest ideas become paste-ready work for Cursor.</p>
+          <h1 id="summary-title">Harvest links. Decide once. <span class="gold-text">Steal what ships.</span></h1>
+          <p>Every link <span class="gold-text">gets a verdict</span>, the useful parts get harvested, and only the strongest ideas become <span class="gold-text">paste-ready work</span> for Cursor.</p>
         </div>
       </div>
       <div class="stats-panel" aria-label="Review summary">
@@ -1768,7 +1769,7 @@
         <div class="card-list" data-list="skipped"></div>
       </div>
       <div class="grid-list" id="grid-list"></div>
-      <div class="empty-state" id="empty"><strong>No reviews match.</strong><p id="empty-copy">Try a different search or clear the active filters.</p><button class="empty-action" id="empty-action" type="button">Clear filters</button></div>
+      <div class="empty-state" id="empty"><strong>No cards match filters.</strong><p id="empty-copy">Try a different search or clear the active filters.</p><button class="empty-action" id="empty-action" type="button">Clear filters</button></div>
     </section>
     <p class="result-note" id="result-note" aria-live="polite">Showing all 8 reviews.</p>
     </div>
@@ -3403,14 +3404,14 @@ DONE = install + Cursor connect + one prototype + export verified + verdict + re
       }
 
       function renderUtilities() {
-        document.getElementById("bookmark-list").innerHTML = bookmarks.length ? bookmarks.map(function (item, i) { return utilityCardHtml(item, "bookmark", i); }).join("") : '<div class="empty-shelf"><strong>No bookmarks yet.</strong><p>Save a useful link here without running a full review.</p><button class="empty-action" type="button" data-empty-add="bookmark">Add this link</button></div>';
-        document.getElementById("spitball-list").innerHTML = spitballs.length ? spitballs.map(function (item, i) { return utilityCardHtml(item, "spitball", i); }).join("") : '<div class="empty-shelf"><strong>No spitballs yet.</strong><p>Capture a raw idea now and decide what it becomes later.</p><button class="empty-action" type="button" data-empty-add="spitball">Capture an idea</button></div>';
-        document.getElementById("todo-list").innerHTML = todos.length ? todos.map(function (item, i) { return utilityCardHtml(item, "todo", i); }).join("") : '<div class="empty-shelf"><strong>Your action queue is clear.</strong><p>Add a task when something becomes actionable.</p><button class="empty-action" type="button" data-empty-add="todo">Add a task</button></div>';
+        document.getElementById("bookmark-list").innerHTML = bookmarks.length ? bookmarks.map(function (item, i) { return utilityCardHtml(item, "bookmark", i); }).join("") : '<div class="empty-shelf"><strong>No bookmarks yet.</strong><p>Save a useful link here without running a full review.</p><button class="empty-action" type="button" data-empty-add="bookmark">+ Add bookmark</button></div>';
+        document.getElementById("spitball-list").innerHTML = spitballs.length ? spitballs.map(function (item, i) { return utilityCardHtml(item, "spitball", i); }).join("") : '<div class="empty-shelf"><strong>No spitballs.</strong><p>Capture a raw idea now and decide what it becomes later.</p><button class="empty-action" type="button" data-empty-add="spitball">+ Add spitball</button></div>';
+        document.getElementById("todo-list").innerHTML = todos.length ? todos.map(function (item, i) { return utilityCardHtml(item, "todo", i); }).join("") : '<div class="empty-shelf"><strong>Inbox clear.</strong><p>Add a task when something becomes actionable.</p><button class="empty-action" type="button" data-empty-add="todo">+ Add to-do</button></div>';
         var favorites = [];
         reviews.filter(function (item) { return item.favorite; }).forEach(function (item) { favorites.push('<article class="utility-card bookmark">' + anchorHtml(item.title, hostOf(item.url), "Reviewed link") + '<div class="utility-meta"><span class="utility-chip">Reviewed link</span></div><p>' + escapeHtml(item.recommendation) + '</p><div class="utility-actions"><button class="mini-btn" type="button" data-open-review="' + item.id + '">Open review</button><button class="mini-btn favorite on" type="button" data-favorite-review="' + item.id + '">★ Favorite</button></div></article>'); });
         bookmarks.filter(function (item) { return item.favorite; }).forEach(function (item) { favorites.push(utilityCardHtml(item, "bookmark", 0)); });
         spitballs.filter(function (item) { return item.favorite; }).forEach(function (item) { favorites.push(utilityCardHtml(item, "spitball", 0)); });
-        document.getElementById("favorite-list").innerHTML = favorites.length ? favorites.join("") : '<div class="empty-shelf"><strong>No favorites yet.</strong><p>Star a review, bookmark, or idea to build a shortlist.</p><button class="empty-action" type="button" data-empty-workspace="reviews">Browse reviews</button></div>';
+        document.getElementById("favorite-list").innerHTML = favorites.length ? favorites.join("") : '<div class="empty-shelf"><strong>No favorite reviews.</strong><p>Star a review, bookmark, or idea to build a shortlist.</p><button class="empty-action" type="button" data-empty-workspace="reviews">Browse reviews</button></div>';
         document.getElementById("tab-reviews-count").textContent = reviews.length;
         document.getElementById("tab-bookmarks-count").textContent = bookmarks.length;
         document.getElementById("tab-spitballs-count").textContent = spitballs.length;
