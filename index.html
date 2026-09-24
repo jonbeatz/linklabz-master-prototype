@@ -1693,6 +1693,50 @@
       #panel-reviews .tag-row { margin-top: 10px; }
     }
 
+    /* ---- MOBILE REVIEWS: stacked deck — top card active, 2-3 edges fanned behind ---- */
+    .stack-shell { display: none; }
+    .stack-stage { position: relative; height: 520px; margin: 6px 0 0; touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: grab; }
+    .stack-stage.is-dragging { cursor: grabbing; }
+    .stack-card {
+      position: absolute; left: 50%; top: 0; width: min(100%, 400px);
+      min-height: 448px; max-height: 470px;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; gap: 12px;
+      padding: 22px;
+      background: linear-gradient(165deg, #232610 0%, #1a1c0e 100%);
+      border: 1px solid var(--line); border-radius: 18px;
+      box-shadow: var(--shadow);
+      transition: transform .38s cubic-bezier(.2,.76,.2,1), opacity .3s ease, filter .3s ease;
+      overflow: hidden;
+    }
+    .stack-topline { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .stack-eyebrow { font: 700 11px/1.4 "IBM Plex Mono", monospace; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
+    .stack-title { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 1.6rem; line-height: 1.15; color: var(--ink); overflow-wrap: break-word; }
+    .stack-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; font-size: .85rem; color: var(--muted); }
+    .stack-rating { color: var(--accent); font-weight: 700; }
+    .stack-why { margin: 0; color: var(--ink); opacity: .88; font-size: .92rem; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
+    .stack-open {
+      margin-top: auto; align-self: flex-start;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 20px; border-radius: 12px;
+      background: var(--gold-gradient); color: #141414;
+      font-weight: 800; font-size: .9rem; text-decoration: none;
+      box-shadow: 0 6px 18px var(--gold-glow);
+    }
+    .stack-controls { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 10px; }
+    .stack-arrow {
+      display: grid; place-items: center; width: 48px; height: 48px; padding: 0;
+      border: 1px solid var(--line-strong); border-radius: 50%;
+      background: var(--surface); color: var(--ink); font-size: 1.2rem; cursor: pointer;
+    }
+    .stack-arrow:active { transform: scale(.94); }
+    .stack-counter { margin: 0; min-width: 80px; text-align: center; font-family: "IBM Plex Mono", monospace; font-size: .85rem; color: var(--muted); }
+    @media (max-width: 720px) {
+      #panel-reviews .board:not(.grid-view) { display: block; overflow: visible; }
+      #panel-reviews .board:not(.grid-view) .lane { display: none !important; }
+      #panel-reviews .board:not(.grid-view) .stack-shell { display: block; }
+    }
+
     /* ---- BOOKMARKS: "The Shelf" — tight favicon rows ---- */
     #bookmark-list { display: flex; flex-direction: column; gap: 10px; }
     #bookmark-list .utility-card.bookmark { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 13px 16px; border-radius: 12px; border-left: 3px solid var(--sec-accent); }
@@ -1917,6 +1961,14 @@
         <div class="card-list" data-list="skipped"></div>
       </div>
       <div class="grid-list" id="grid-list"></div>
+      <div class="stack-shell" id="stack-shell" tabindex="0" aria-label="Review stack">
+        <div class="stack-stage" id="stack-stage" aria-live="polite"></div>
+        <div class="stack-controls">
+          <button class="stack-arrow" id="stack-prev" type="button" aria-label="Previous review">&#8592;</button>
+          <p class="stack-counter" id="stack-counter">1 / 19</p>
+          <button class="stack-arrow" id="stack-next" type="button" aria-label="Next review">&#8594;</button>
+        </div>
+      </div>
       <div class="empty-state" id="empty"><strong>No cards match filters.</strong><p id="empty-copy">Try a different search or clear the active filters.</p><button class="empty-action" id="empty-action" type="button">Clear filters</button></div>
     </section>
     <p class="result-note" id="result-note" aria-live="polite">Showing all 8 reviews.</p>
@@ -1948,15 +2000,15 @@
       <div class="gradient-grid" id="gradient-grid">
         <article class="gradient-card" style="--gradient:linear-gradient(135deg, #0D0D0D 0%, #36363B 52%, #6A6070 100%)"><div class="gradient-swatch" role="img" aria-label="Graphite Veil gradient"></div><div class="gradient-card-head"><h3>Graphite Veil</h3><button class="gradient-copy" type="button" data-copy-css="linear-gradient(135deg, #0D0D0D 0%, #36363B 52%, #6A6070 100%)">Copy CSS</button></div><div class="gradient-stops"><div class="gradient-stop"><span class="gradient-dot" style="--stop:#0D0D0D"></span><span class="gradient-stop-name">Black</span><button class="hex-copy" type="button" data-copy-hex="#0D0D0D" aria-label="Copy Black #0D0D0D">#0D0D0D</button><span class="contrast-rating">AAA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#36363B"></span><span class="gradient-stop-name">Amakusa Black</span><button class="hex-copy" type="button" data-copy-hex="#36363B" aria-label="Copy Amakusa Black #36363B">#36363B</button><span class="contrast-rating">AAA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#6A6070"></span><span class="gradient-stop-name">Dusk Temple Grey</span><button class="hex-copy" type="button" data-copy-hex="#6A6070" aria-label="Copy Dusk Temple Grey #6A6070">#6A6070</button><span class="contrast-rating">AA</span></div></div></article>
         <article class="gradient-card" style="--gradient:linear-gradient(145deg, #1C1C1C 0%, #524E4D 58%, #5A544B 100%)"><div class="gradient-swatch" role="img" aria-label="Quiet Alloy gradient"></div><div class="gradient-card-head"><h3>Quiet Alloy</h3><button class="gradient-copy" type="button" data-copy-css="linear-gradient(145deg, #1C1C1C 0%, #524E4D 58%, #5A544B 100%)">Copy CSS</button></div><div class="gradient-stops"><div class="gradient-stop"><span class="gradient-dot" style="--stop:#1C1C1C"></span><span class="gradient-stop-name">Ink Black</span><button class="hex-copy" type="button" data-copy-hex="#1C1C1C" aria-label="Copy Ink Black #1C1C1C">#1C1C1C</button><span class="contrast-rating">AAA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#524E4D"></span><span class="gradient-stop-name">Charcoal</span><button class="hex-copy" type="button" data-copy-hex="#524E4D" aria-label="Copy Charcoal #524E4D">#524E4D</button><span class="contrast-rating">AAA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#5A544B"></span><span class="gradient-stop-name">Sooty Bamboo</span><button class="hex-copy" type="button" data-copy-hex="#5A544B" aria-label="Copy Sooty Bamboo #5A544B">#5A544B</button><span class="contrast-rating">AAA</span></div></div></article>
-        <article class="gradient-card" style="--gradient:linear-gradient(135deg, #0D0D0D 0%, #A9714B 58%, #524E4D 100%)"><div class="gradient-swatch" role="img" aria-label="Mossed Concrete gradient"></div><div class="gradient-card-head"><h3>Mossed Concrete</h3><button class="gradient-copy" type="button" data-copy-css="linear-gradient(135deg, #0D0D0D 0%, #A9714B 58%, #524E4D 100%)">Copy CSS</button></div><div class="gradient-stops"><div class="gradient-stop"><span class="gradient-dot" style="--stop:#0D0D0D"></span><span class="gradient-stop-name">Black</span><button class="hex-copy" type="button" data-copy-hex="#0D0D0D" aria-label="Copy Black #0D0D0D">#0D0D0D</button><span class="contrast-rating">AAA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#A9714B"></span><span class="gradient-stop-name">Rusted Storeroom</span><button class="hex-copy" type="button" data-copy-hex="#A9714B" aria-label="Copy Rusted Storeroom #A9714B">#A9714B</button><span class="contrast-rating">AA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#524E4D"></span><span class="gradient-stop-name">Charcoal</span><button class="hex-copy" type="button" data-copy-hex="#524E4D" aria-label="Copy Charcoal #524E4D">#524E4D</button><span class="contrast-rating">AAA</span></div></div></article>
+        <article class="gradient-card" style="--gradient:linear-gradient(135deg, #0D0D0D 0%, #5B6F57 58%, #524E4D 100%)"><div class="gradient-swatch" role="img" aria-label="Mossed Concrete gradient"></div><div class="gradient-card-head"><h3>Mossed Concrete</h3><button class="gradient-copy" type="button" data-copy-css="linear-gradient(135deg, #0D0D0D 0%, #5B6F57 58%, #524E4D 100%)">Copy CSS</button></div><div class="gradient-stops"><div class="gradient-stop"><span class="gradient-dot" style="--stop:#0D0D0D"></span><span class="gradient-stop-name">Black</span><button class="hex-copy" type="button" data-copy-hex="#0D0D0D" aria-label="Copy Black #0D0D0D">#0D0D0D</button><span class="contrast-rating">AAA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#5B6F57"></span><span class="gradient-stop-name">Rusted Storeroom</span><button class="hex-copy" type="button" data-copy-hex="#5B6F57" aria-label="Copy Rusted Storeroom #5B6F57">#5B6F57</button><span class="contrast-rating">AA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#524E4D"></span><span class="gradient-stop-name">Charcoal</span><button class="hex-copy" type="button" data-copy-hex="#524E4D" aria-label="Copy Charcoal #524E4D">#524E4D</button><span class="contrast-rating">AAA</span></div></div></article>
         <article class="gradient-card" style="--gradient:linear-gradient(125deg, #1C1C1C 0%, #524748 48%, #6A6070 100%)"><div class="gradient-swatch" role="img" aria-label="Crimson Ash gradient"></div><div class="gradient-card-head"><h3>Crimson Ash</h3><button class="gradient-copy" type="button" data-copy-css="linear-gradient(125deg, #1C1C1C 0%, #524748 48%, #6A6070 100%)">Copy CSS</button></div><div class="gradient-stops"><div class="gradient-stop"><span class="gradient-dot" style="--stop:#1C1C1C"></span><span class="gradient-stop-name">Ink Black</span><button class="hex-copy" type="button" data-copy-hex="#1C1C1C" aria-label="Copy Ink Black #1C1C1C">#1C1C1C</button><span class="contrast-rating">AAA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#524748"></span><span class="gradient-stop-name">Quenched Crimson Grey</span><button class="hex-copy" type="button" data-copy-hex="#524748" aria-label="Copy Quenched Crimson Grey #524748">#524748</button><span class="contrast-rating">AAA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#6A6070"></span><span class="gradient-stop-name">Dusk Temple Grey</span><button class="hex-copy" type="button" data-copy-hex="#6A6070" aria-label="Copy Dusk Temple Grey #6A6070">#6A6070</button><span class="contrast-rating">AA</span></div></div></article>
         <article class="gradient-card" style="--gradient:linear-gradient(160deg, #36363B 0%, #524E4D 52%, #6A6070 100%)"><div class="gradient-swatch" role="img" aria-label="Tempered Slate gradient"></div><div class="gradient-card-head"><h3>Tempered Slate</h3><button class="gradient-copy" type="button" data-copy-css="linear-gradient(160deg, #36363B 0%, #524E4D 52%, #6A6070 100%)">Copy CSS</button></div><div class="gradient-stops"><div class="gradient-stop"><span class="gradient-dot" style="--stop:#36363B"></span><span class="gradient-stop-name">Amakusa Black</span><button class="hex-copy" type="button" data-copy-hex="#36363B" aria-label="Copy Amakusa Black #36363B">#36363B</button><span class="contrast-rating">AAA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#524E4D"></span><span class="gradient-stop-name">Charcoal</span><button class="hex-copy" type="button" data-copy-hex="#524E4D" aria-label="Copy Charcoal #524E4D">#524E4D</button><span class="contrast-rating">AAA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#6A6070"></span><span class="gradient-stop-name">Dusk Temple Grey</span><button class="hex-copy" type="button" data-copy-hex="#6A6070" aria-label="Copy Dusk Temple Grey #6A6070">#6A6070</button><span class="contrast-rating">AA</span></div></div></article>
-        <article class="gradient-card" style="--gradient:linear-gradient(140deg, #0D0D0D 0%, #5A544B 50%, #A9714B 100%)"><div class="gradient-swatch" role="img" aria-label="Soot & Sage gradient"></div><div class="gradient-card-head"><h3>Soot & Sage</h3><button class="gradient-copy" type="button" data-copy-css="linear-gradient(140deg, #0D0D0D 0%, #5A544B 50%, #A9714B 100%)">Copy CSS</button></div><div class="gradient-stops"><div class="gradient-stop"><span class="gradient-dot" style="--stop:#0D0D0D"></span><span class="gradient-stop-name">Black</span><button class="hex-copy" type="button" data-copy-hex="#0D0D0D" aria-label="Copy Black #0D0D0D">#0D0D0D</button><span class="contrast-rating">AAA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#5A544B"></span><span class="gradient-stop-name">Sooty Bamboo</span><button class="hex-copy" type="button" data-copy-hex="#5A544B" aria-label="Copy Sooty Bamboo #5A544B">#5A544B</button><span class="contrast-rating">AAA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#A9714B"></span><span class="gradient-stop-name">Rusted Storeroom</span><button class="hex-copy" type="button" data-copy-hex="#A9714B" aria-label="Copy Rusted Storeroom #A9714B">#A9714B</button><span class="contrast-rating">AA</span></div></div></article>
+        <article class="gradient-card" style="--gradient:linear-gradient(140deg, #0D0D0D 0%, #5A544B 50%, #5B6F57 100%)"><div class="gradient-swatch" role="img" aria-label="Soot & Sage gradient"></div><div class="gradient-card-head"><h3>Soot & Sage</h3><button class="gradient-copy" type="button" data-copy-css="linear-gradient(140deg, #0D0D0D 0%, #5A544B 50%, #5B6F57 100%)">Copy CSS</button></div><div class="gradient-stops"><div class="gradient-stop"><span class="gradient-dot" style="--stop:#0D0D0D"></span><span class="gradient-stop-name">Black</span><button class="hex-copy" type="button" data-copy-hex="#0D0D0D" aria-label="Copy Black #0D0D0D">#0D0D0D</button><span class="contrast-rating">AAA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#5A544B"></span><span class="gradient-stop-name">Sooty Bamboo</span><button class="hex-copy" type="button" data-copy-hex="#5A544B" aria-label="Copy Sooty Bamboo #5A544B">#5A544B</button><span class="contrast-rating">AAA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#5B6F57"></span><span class="gradient-stop-name">Rusted Storeroom</span><button class="hex-copy" type="button" data-copy-hex="#5B6F57" aria-label="Copy Rusted Storeroom #5B6F57">#5B6F57</button><span class="contrast-rating">AA</span></div></div></article>
         <article class="gradient-card" style="--gradient:linear-gradient(120deg, #1C1C1C 0%, #36363B 48%, #524748 100%)"><div class="gradient-swatch" role="img" aria-label="Workshop Night gradient"></div><div class="gradient-card-head"><h3>Workshop Night</h3><button class="gradient-copy" type="button" data-copy-css="linear-gradient(120deg, #1C1C1C 0%, #36363B 48%, #524748 100%)">Copy CSS</button></div><div class="gradient-stops"><div class="gradient-stop"><span class="gradient-dot" style="--stop:#1C1C1C"></span><span class="gradient-stop-name">Ink Black</span><button class="hex-copy" type="button" data-copy-hex="#1C1C1C" aria-label="Copy Ink Black #1C1C1C">#1C1C1C</button><span class="contrast-rating">AAA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#36363B"></span><span class="gradient-stop-name">Amakusa Black</span><button class="hex-copy" type="button" data-copy-hex="#36363B" aria-label="Copy Amakusa Black #36363B">#36363B</button><span class="contrast-rating">AAA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#524748"></span><span class="gradient-stop-name">Quenched Crimson Grey</span><button class="hex-copy" type="button" data-copy-hex="#524748" aria-label="Copy Quenched Crimson Grey #524748">#524748</button><span class="contrast-rating">AAA</span></div></div></article>
         <article class="gradient-card" style="--gradient:linear-gradient(150deg, #524748 0%, #524E4D 50%, #5A544B 100%)"><div class="gradient-swatch" role="img" aria-label="Still Matter gradient"></div><div class="gradient-card-head"><h3>Still Matter</h3><button class="gradient-copy" type="button" data-copy-css="linear-gradient(150deg, #524748 0%, #524E4D 50%, #5A544B 100%)">Copy CSS</button></div><div class="gradient-stops"><div class="gradient-stop"><span class="gradient-dot" style="--stop:#524748"></span><span class="gradient-stop-name">Quenched Crimson Grey</span><button class="hex-copy" type="button" data-copy-hex="#524748" aria-label="Copy Quenched Crimson Grey #524748">#524748</button><span class="contrast-rating">AAA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#524E4D"></span><span class="gradient-stop-name">Charcoal</span><button class="hex-copy" type="button" data-copy-hex="#524E4D" aria-label="Copy Charcoal #524E4D">#524E4D</button><span class="contrast-rating">AAA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#5A544B"></span><span class="gradient-stop-name">Sooty Bamboo</span><button class="hex-copy" type="button" data-copy-hex="#5A544B" aria-label="Copy Sooty Bamboo #5A544B">#5A544B</button><span class="contrast-rating">AAA</span></div></div></article>
         <article class="gradient-card" style="--gradient:linear-gradient(132deg, #0D0D0D 0%, #6A6070 56%, #36363B 100%)"><div class="gradient-swatch" role="img" aria-label="Dusk Archive gradient"></div><div class="gradient-card-head"><h3>Dusk Archive</h3><button class="gradient-copy" type="button" data-copy-css="linear-gradient(132deg, #0D0D0D 0%, #6A6070 56%, #36363B 100%)">Copy CSS</button></div><div class="gradient-stops"><div class="gradient-stop"><span class="gradient-dot" style="--stop:#0D0D0D"></span><span class="gradient-stop-name">Black</span><button class="hex-copy" type="button" data-copy-hex="#0D0D0D" aria-label="Copy Black #0D0D0D">#0D0D0D</button><span class="contrast-rating">AAA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#6A6070"></span><span class="gradient-stop-name">Dusk Temple Grey</span><button class="hex-copy" type="button" data-copy-hex="#6A6070" aria-label="Copy Dusk Temple Grey #6A6070">#6A6070</button><span class="contrast-rating">AA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#36363B"></span><span class="gradient-stop-name">Amakusa Black</span><button class="hex-copy" type="button" data-copy-hex="#36363B" aria-label="Copy Amakusa Black #36363B">#36363B</button><span class="contrast-rating">AAA</span></div></div></article>
-        <article class="gradient-card" style="--gradient:linear-gradient(155deg, #36363B 0%, #A9714B 54%, #5A544B 100%)"><div class="gradient-swatch" role="img" aria-label="Storeroom Fog gradient"></div><div class="gradient-card-head"><h3>Storeroom Fog</h3><button class="gradient-copy" type="button" data-copy-css="linear-gradient(155deg, #36363B 0%, #A9714B 54%, #5A544B 100%)">Copy CSS</button></div><div class="gradient-stops"><div class="gradient-stop"><span class="gradient-dot" style="--stop:#36363B"></span><span class="gradient-stop-name">Amakusa Black</span><button class="hex-copy" type="button" data-copy-hex="#36363B" aria-label="Copy Amakusa Black #36363B">#36363B</button><span class="contrast-rating">AAA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#A9714B"></span><span class="gradient-stop-name">Rusted Storeroom</span><button class="hex-copy" type="button" data-copy-hex="#A9714B" aria-label="Copy Rusted Storeroom #A9714B">#A9714B</button><span class="contrast-rating">AA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#5A544B"></span><span class="gradient-stop-name">Sooty Bamboo</span><button class="hex-copy" type="button" data-copy-hex="#5A544B" aria-label="Copy Sooty Bamboo #5A544B">#5A544B</button><span class="contrast-rating">AAA</span></div></div></article>
-        <article class="gradient-card" style="--gradient:linear-gradient(128deg, #0D0D0D 0%, #524E4D 46%, #A9714B 100%)"><div class="gradient-swatch" role="img" aria-label="Carbon Patina gradient"></div><div class="gradient-card-head"><h3>Carbon Patina</h3><button class="gradient-copy" type="button" data-copy-css="linear-gradient(128deg, #0D0D0D 0%, #524E4D 46%, #A9714B 100%)">Copy CSS</button></div><div class="gradient-stops"><div class="gradient-stop"><span class="gradient-dot" style="--stop:#0D0D0D"></span><span class="gradient-stop-name">Black</span><button class="hex-copy" type="button" data-copy-hex="#0D0D0D" aria-label="Copy Black #0D0D0D">#0D0D0D</button><span class="contrast-rating">AAA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#524E4D"></span><span class="gradient-stop-name">Charcoal</span><button class="hex-copy" type="button" data-copy-hex="#524E4D" aria-label="Copy Charcoal #524E4D">#524E4D</button><span class="contrast-rating">AAA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#A9714B"></span><span class="gradient-stop-name">Rusted Storeroom</span><button class="hex-copy" type="button" data-copy-hex="#A9714B" aria-label="Copy Rusted Storeroom #A9714B">#A9714B</button><span class="contrast-rating">AA</span></div></div></article>
+        <article class="gradient-card" style="--gradient:linear-gradient(155deg, #36363B 0%, #5B6F57 54%, #5A544B 100%)"><div class="gradient-swatch" role="img" aria-label="Storeroom Fog gradient"></div><div class="gradient-card-head"><h3>Storeroom Fog</h3><button class="gradient-copy" type="button" data-copy-css="linear-gradient(155deg, #36363B 0%, #5B6F57 54%, #5A544B 100%)">Copy CSS</button></div><div class="gradient-stops"><div class="gradient-stop"><span class="gradient-dot" style="--stop:#36363B"></span><span class="gradient-stop-name">Amakusa Black</span><button class="hex-copy" type="button" data-copy-hex="#36363B" aria-label="Copy Amakusa Black #36363B">#36363B</button><span class="contrast-rating">AAA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#5B6F57"></span><span class="gradient-stop-name">Rusted Storeroom</span><button class="hex-copy" type="button" data-copy-hex="#5B6F57" aria-label="Copy Rusted Storeroom #5B6F57">#5B6F57</button><span class="contrast-rating">AA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#5A544B"></span><span class="gradient-stop-name">Sooty Bamboo</span><button class="hex-copy" type="button" data-copy-hex="#5A544B" aria-label="Copy Sooty Bamboo #5A544B">#5A544B</button><span class="contrast-rating">AAA</span></div></div></article>
+        <article class="gradient-card" style="--gradient:linear-gradient(128deg, #0D0D0D 0%, #524E4D 46%, #5B6F57 100%)"><div class="gradient-swatch" role="img" aria-label="Carbon Patina gradient"></div><div class="gradient-card-head"><h3>Carbon Patina</h3><button class="gradient-copy" type="button" data-copy-css="linear-gradient(128deg, #0D0D0D 0%, #524E4D 46%, #5B6F57 100%)">Copy CSS</button></div><div class="gradient-stops"><div class="gradient-stop"><span class="gradient-dot" style="--stop:#0D0D0D"></span><span class="gradient-stop-name">Black</span><button class="hex-copy" type="button" data-copy-hex="#0D0D0D" aria-label="Copy Black #0D0D0D">#0D0D0D</button><span class="contrast-rating">AAA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#524E4D"></span><span class="gradient-stop-name">Charcoal</span><button class="hex-copy" type="button" data-copy-hex="#524E4D" aria-label="Copy Charcoal #524E4D">#524E4D</button><span class="contrast-rating">AAA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#5B6F57"></span><span class="gradient-stop-name">Rusted Storeroom</span><button class="hex-copy" type="button" data-copy-hex="#5B6F57" aria-label="Copy Rusted Storeroom #5B6F57">#5B6F57</button><span class="contrast-rating">AA</span></div></div></article>
         <article class="gradient-card" style="--gradient:linear-gradient(180deg, #0D0D0D 0%, #1C1C1C 48%, #36363B 100%)"><div class="gradient-swatch" role="img" aria-label="Monolith gradient"></div><div class="gradient-card-head"><h3>Monolith</h3><button class="gradient-copy" type="button" data-copy-css="linear-gradient(180deg, #0D0D0D 0%, #1C1C1C 48%, #36363B 100%)">Copy CSS</button></div><div class="gradient-stops"><div class="gradient-stop"><span class="gradient-dot" style="--stop:#0D0D0D"></span><span class="gradient-stop-name">Black</span><button class="hex-copy" type="button" data-copy-hex="#0D0D0D" aria-label="Copy Black #0D0D0D">#0D0D0D</button><span class="contrast-rating">AAA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#1C1C1C"></span><span class="gradient-stop-name">Ink Black</span><button class="hex-copy" type="button" data-copy-hex="#1C1C1C" aria-label="Copy Ink Black #1C1C1C">#1C1C1C</button><span class="contrast-rating">AAA</span></div><div class="gradient-stop"><span class="gradient-dot" style="--stop:#36363B"></span><span class="gradient-stop-name">Amakusa Black</span><button class="hex-copy" type="button" data-copy-hex="#36363B" aria-label="Copy Amakusa Black #36363B">#36363B</button><span class="contrast-rating">AAA</span></div></div></article>
       </div>
     </section>
@@ -3806,7 +3858,92 @@ DONE = install + Cursor connect + one prototype + export verified + verdict + re
         updateStats();
         renderFacetBar(visible.length);
         renderUtilities();
+        buildStack(visible);
       }
+
+      /* ---- mobile stacked deck for Reviews ---- */
+      var stackIndex = 0, stackCards = [], stackLocked = false;
+      function stackCardHtml(item) {
+        var rating = typeof item.rating === "number" ? item.rating.toFixed(1) : "";
+        return '<article class="stack-card" data-id="' + item.id + '">' +
+          '<div class="stack-topline"><span class="stack-eyebrow">' + escapeHtml(item.categoryLabel || item.category || "") + '</span>' +
+          '<span class="verdict-chip ' + item.verdict + '">' + escapeHtml(labels[item.verdict] || item.verdict) + '</span></div>' +
+          '<h3 class="stack-title">' + escapeHtml(item.title) + '</h3>' +
+          '<div class="stack-meta"><span class="stack-rating">\u2605 ' + rating + '</span>' +
+          (item.project ? '<span class="stack-project">' + escapeHtml(item.project) + '</span>' : '') + '</div>' +
+          '<p class="stack-why">' + escapeHtml(item.why || "") + '</p>' +
+          (item.url ? '<a class="stack-open" href="' + escapeHtml(item.url) + '" target="_blank" rel="noopener noreferrer">Open link \u2197</a>' : '') +
+        '</article>';
+      }
+      function renderStack() {
+        var n = stackCards.length;
+        stackCards.forEach(function (card, i) {
+          var depth = n ? (((i - stackIndex) % n) + n) % n : 0;
+          var vis = depth <= 3;
+          card.style.zIndex = vis ? String(60 - depth) : "0";
+          card.style.opacity = vis ? String(depth === 0 ? 1 : Math.max(.3, .92 - depth * .2)) : "0";
+          card.style.filter = vis && depth ? "brightness(" + (1 - depth * .13) + ")" : "brightness(1)";
+          card.style.transform = depth === 0 ? "translate(-50%, 0) scale(1)"
+            : "translate(-50%, " + (depth * 18) + "px) scale(" + (1 - depth * .04).toFixed(3) + ")";
+          card.classList.toggle("is-top", depth === 0);
+          card.setAttribute("aria-hidden", depth === 0 ? "false" : "true");
+          card.tabIndex = depth === 0 ? 0 : -1;
+          card.style.pointerEvents = depth === 0 ? "auto" : "none";
+        });
+        document.getElementById("stack-counter").textContent = n ? (stackIndex + 1) + " / " + n : "0 / 0";
+      }
+      function buildStack(items) {
+        var stage = document.getElementById("stack-stage");
+        var shell = document.getElementById("stack-shell");
+        stage.innerHTML = items.map(stackCardHtml).join("");
+        stackCards = Array.prototype.slice.call(stage.children);
+        stackIndex = Math.min(stackIndex, Math.max(0, stackCards.length - 1));
+        shell.style.display = stackCards.length ? "" : "none";
+        renderStack();
+      }
+      function moveStack(direction) {
+        if (stackLocked || stackCards.length < 2) return;
+        stackLocked = true;
+        if (direction > 0) {
+          var top = stackCards[stackIndex];
+          top.style.transform = "translate(-50%, -90px) scale(.92)";
+          top.style.opacity = "0";
+          window.setTimeout(function () {
+            stackIndex = (stackIndex + 1) % stackCards.length;
+            renderStack();
+            stackLocked = false;
+          }, 340);
+        } else {
+          stackIndex = (stackIndex - 1 + stackCards.length) % stackCards.length;
+          renderStack();
+          window.setTimeout(function () { stackLocked = false; }, 380);
+        }
+      }
+      document.getElementById("stack-prev").addEventListener("click", function () { moveStack(-1); });
+      document.getElementById("stack-next").addEventListener("click", function () { moveStack(1); });
+      document.getElementById("stack-shell").addEventListener("keydown", function (event) {
+        if (event.key === "ArrowLeft") { event.preventDefault(); moveStack(-1); }
+        if (event.key === "ArrowRight") { event.preventDefault(); moveStack(1); }
+      });
+      (function () {
+        var stage = document.getElementById("stack-stage");
+        var startX = null, startY = null;
+        stage.addEventListener("pointerdown", function (event) {
+          startX = event.clientX; startY = event.clientY;
+          stage.classList.add("is-dragging");
+        });
+        stage.addEventListener("pointerup", function (event) {
+          stage.classList.remove("is-dragging");
+          if (startX === null) return;
+          var dx = event.clientX - startX, dy = event.clientY - startY;
+          startX = null; startY = null;
+          if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy)) { moveStack(dx < 0 ? 1 : -1); }
+          else if (dy < -56 && Math.abs(dy) > Math.abs(dx)) { moveStack(1); }
+        });
+        stage.addEventListener("pointercancel", function () {
+          stage.classList.remove("is-dragging"); startX = null; startY = null;
+        });
+      })();
 
       function getReview(id) {
         return reviews.find(function (item) { return item.id === id; });
