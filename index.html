@@ -1632,6 +1632,102 @@
     .top-nav, .managebar, .facet-popover, .command-palette, .drawer, .drawer-control-strip, .drawer-actions { background: rgba(28,28,28,.94); }
     .gradient-swatch { border-color: rgba(242,240,237,.14); }
     .hold-banner, .hold-stamp { color: var(--danger); }
+
+    /* ============ SECTION IDENTITIES (2026-09-24) — each workspace gets its own visual system ============ */
+    .workspace-panel { --sec-accent: var(--accent); --sec-icon: "\2726"; }
+    #panel-reviews { --sec-accent: #E8A317; --sec-icon: "\25A4"; }
+    #panel-bookmarks { --sec-accent: #F6C453; --sec-icon: "\1F516"; }
+    #panel-spitballs { --sec-accent: #E07B39; --sec-icon: "\1F4A1"; }
+    #panel-todos { --sec-accent: #9DBE7B; --sec-icon: "\2611"; }
+    #panel-favorites { --sec-accent: #E26D8C; --sec-icon: "\2605"; }
+    #panel-gradients { --sec-accent: #C98A5B; --sec-icon: "\1F3A8"; }
+    #panel-tools { --sec-accent: #8E9AAF; --sec-icon: "\1F6E0"; }
+
+    /* Distinct section headers: icon + accent rule */
+    .utility-head { position: relative; border-bottom: 1px solid var(--line); padding-bottom: 14px; }
+    .utility-head::after { content: ""; position: absolute; left: 0; bottom: -1px; width: 76px; height: 2px; border-radius: 2px; background: linear-gradient(90deg, var(--sec-accent), transparent); }
+    .utility-head h2 { display: flex; align-items: center; gap: 10px; }
+    .utility-head h2::before { content: var(--sec-icon); font-size: .85em; filter: saturate(1.2); }
+
+    #panel-reviews .lane[data-lane="inbox"] { --lane-accent: var(--cyan); }
+    #panel-reviews .lane[data-lane="try"] { --lane-accent: var(--try); }
+    #panel-reviews .lane[data-lane="parked"] { --lane-accent: var(--parked); }
+    #panel-reviews .lane[data-lane="skipped"] { --lane-accent: var(--skipped); }
+    /* ---- REVIEWS: "The Deck" — lane board keeps desktop grid; mobile becomes a snap-scroll deck ---- */
+    #panel-reviews .lane { border-top: 3px solid var(--lane-accent, var(--sec-accent)); border-radius: 14px; overflow: hidden; }
+    #panel-reviews .lane-header { background: rgba(20, 21, 25, .82); }
+    #panel-reviews .lane-title { text-transform: uppercase; letter-spacing: .12em; font-size: 12.5px; font-weight: 800; }
+    #panel-reviews .lane-count { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--sec-accent); border: 1px solid var(--line-strong); border-radius: 999px; padding: 2px 9px; }
+    @media (max-width: 720px) {
+      #panel-reviews .board:not(.grid-view) { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; padding: 4px 2px 14px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+      #panel-reviews .board:not(.grid-view)::-webkit-scrollbar { display: none; }
+      #panel-reviews .board:not(.grid-view) .lane { flex: 0 0 86vw; scroll-snap-align: center; }
+      #panel-reviews .board:not(.grid-view) .card-list { max-height: 60vh; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 12px; }
+      #panel-reviews .board:not(.grid-view) .empty-state { flex: 0 0 86vw; scroll-snap-align: center; }
+    }
+
+    /* ---- BOOKMARKS: "The Shelf" — tight favicon rows ---- */
+    #bookmark-list { display: flex; flex-direction: column; gap: 10px; }
+    #bookmark-list .utility-card.bookmark { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 13px 16px; border-radius: 12px; border-left: 3px solid var(--sec-accent); }
+    #bookmark-list .utility-identity { margin: 0; flex: 1 1 220px; }
+    #bookmark-list .utility-identity .visual-anchor { width: 38px; height: 38px; border-radius: 10px; font-size: 15px; border: 0; color: #fff; background: linear-gradient(135deg, hsl(var(--anchor-hue, 40), 55%, 44%), hsl(var(--anchor-hue, 40), 55%, 26%)); }
+    #bookmark-list .utility-card.bookmark > p { flex: 1 1 100%; margin: 0; font-size: 13px; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+    #bookmark-list .utility-meta { margin: 0; }
+    #bookmark-list .utility-actions { margin-left: auto; padding-top: 0; }
+
+    /* ---- SPITBALLS: "The Wall" — sticky notes with tape ---- */
+    #spitball-list .utility-card.idea { margin-top: 10px; border-radius: 3px 16px 3px 16px; background: linear-gradient(165deg, #2b2417 0%, #1d1811 100%); border: 1px solid rgba(224, 123, 57, .35); box-shadow: 0 10px 24px rgba(0,0,0,.35); transition: transform .18s ease; }
+    #spitball-list .utility-card.idea:nth-child(odd) { transform: rotate(-1.1deg); }
+    #spitball-list .utility-card.idea:nth-child(even) { transform: rotate(.9deg); }
+    #spitball-list .utility-card.idea:nth-child(3n) { transform: rotate(-.5deg); }
+    #spitball-list .utility-card.idea:hover { transform: rotate(0deg) translateY(-2px); }
+    #spitball-list .utility-card.idea::before { content: ""; position: absolute; top: -11px; left: 50%; width: 74px; height: 20px; transform: translateX(-50%) rotate(-2deg); background: rgba(232, 163, 23, .30); border: 1px solid rgba(232, 163, 23, .45); border-radius: 2px; backdrop-filter: blur(1px); }
+    #spitball-list .utility-identity .visual-anchor { border-radius: 50%; background: rgba(224, 123, 57, .16); border-color: rgba(224, 123, 57, .5); color: var(--sec-accent); }
+
+    /* ---- TO-DO: "The Queue" — checklist rows, priority edge ---- */
+    #todo-list { display: flex; flex-direction: column; gap: 8px; }
+    #todo-list .utility-card.task { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 13px 16px 13px 18px; border-radius: 10px; border-left: 4px solid var(--sec-accent); }
+    #todo-list .utility-card.task:has(.priority-high) { border-left-color: #ff7a7a; }
+    #todo-list .utility-card.task:has(.priority-soon) { border-left-color: var(--accent-strong); }
+    #todo-list .utility-identity { margin: 0; flex: 1 1 200px; }
+    #todo-list .utility-identity .visual-anchor { border-radius: 50%; }
+    #todo-list .todo-check { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 13px; }
+    #todo-list .todo-check input { width: 22px; height: 22px; accent-color: var(--sec-accent); cursor: pointer; }
+    #todo-list .utility-card.task.is-done { opacity: .55; }
+    #todo-list .utility-card.task.is-done .utility-identity h3 { text-decoration: line-through; }
+    #todo-list .utility-card.task > p { flex: 1 1 100%; margin: 0; font-size: 13px; color: var(--muted); }
+    #todo-list .utility-actions { margin-left: auto; }
+
+    /* ---- FAVORITES: "The Gallery" — banner cards ---- */
+    #favorite-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    #favorite-list .utility-card { padding: 0; overflow: hidden; border-radius: 16px; }
+    #favorite-list .utility-identity { grid-template-columns: minmax(0, 1fr); gap: 0; margin: 0; }
+    #favorite-list .visual-anchor { width: 100%; height: 104px; border: 0; border-radius: 0; font-size: 42px; color: rgba(255,255,255,.92); background: linear-gradient(135deg, hsl(var(--anchor-hue, 40), 52%, 36%), hsl(calc(var(--anchor-hue, 40) + 28), 50%, 16%)); }
+    #favorite-list .utility-identity > div { padding: 14px 16px 0; }
+    #favorite-list .utility-meta, #favorite-list .utility-card > p { padding: 0 16px; margin: 10px 0 0; }
+    #favorite-list .utility-actions { padding: 12px 16px 16px; }
+    @media (max-width: 1200px) { #favorite-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 720px) { #favorite-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } #favorite-list .visual-anchor { height: 84px; font-size: 34px; } }
+
+    /* ---- GRADIENTS: "The Swatch Wall" — bigger swatches, tighter wall ---- */
+    #panel-gradients .gradient-grid { gap: 12px; }
+    #panel-gradients .gradient-swatch { height: 128px; border-radius: 12px; }
+    #panel-gradients .gradient-card { transition: transform .18s ease, box-shadow .18s ease; }
+    #panel-gradients .gradient-card:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(0,0,0,.4); }
+    @media (max-width: 720px) { #panel-gradients .gradient-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } #panel-gradients .gradient-swatch { height: 96px; } }
+
+    /* ---- TOOLS: "The Console" — mono command-deck list ---- */
+    #panel-tools .tool-grid { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+    #panel-tools .tool-panel { background: rgba(9, 10, 13, .88); border-radius: 12px; }
+    #panel-tools .tool-panel > h3 { font-family: "IBM Plex Mono", monospace; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .14em; color: var(--sec-accent); display: flex; align-items: center; gap: 8px; }
+    #panel-tools .tool-panel > h3::before { content: "\25B8"; color: var(--sec-accent); }
+    #panel-tools .tool-panel > p { font-size: 13px; }
+    #panel-tools .mini-stat strong { font-family: "IBM Plex Mono", monospace; }
+
+    @media (prefers-reduced-motion: reduce) {
+      #spitball-list .utility-card.idea, #panel-gradients .gradient-card { transform: none !important; transition: none; }
+      #panel-reviews .board:not(.grid-view) { scroll-snap-type: none; }
+    }
   </style>
 </head>
 <body>
