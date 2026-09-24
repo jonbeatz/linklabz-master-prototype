@@ -8,7 +8,7 @@
   <link rel="icon" type="image/svg+xml" href="brand/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Eczar:wght@500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;1,800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
   <title>LinkLabz · Master Prototype</title>   <meta property="og:title" content="LinkLabz — Master Prototype" />   <meta property="og:description" content="Trinity + Jon sandbox: the locked FINAL-MASTER spec as a working prototype. Sketch pad — the locked one-pager stays canonical." />   <meta property="og:type" content="website" />   <meta property="og:image" content="assets/screenshot.png" />
   <style>
     :root {
@@ -40,8 +40,8 @@
       --shadow: 0 18px 52px rgba(0, 0, 0, .5), 0 3px 12px rgba(0, 0, 0, .3);
       --shadow-soft: 0 10px 28px rgba(0, 0, 0, .4), 0 2px 8px rgba(0, 0, 0, .25);
       --glass-blur: blur(22px) saturate(110%);
-      --font-display: "Eczar", Georgia, serif;
-      --font-ui: "Plus Jakarta Sans", system-ui, sans-serif;
+      --font-display: "Italiana", "Times New Roman", serif;
+      --font-ui: "Libre Franklin", system-ui, sans-serif;
       --nav-panel: rgba(20,18,4,.98);
     }
 
@@ -1737,6 +1737,31 @@
       #panel-reviews .board:not(.grid-view) .stack-shell { display: block; }
     }
 
+    /* ---- REVIEWS: category digest — expandable index above the board ---- */
+    #panel-reviews .digest { margin: 2px 0 4px; border-top: 1px solid var(--line-strong); }
+    #panel-reviews .digest-row { border-bottom: 1px solid var(--line); }
+    #panel-reviews .digest-toggle {
+      display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 18px; align-items: center;
+      width: 100%; padding: 20px 4px; border: 0; background: transparent; color: var(--ink);
+      text-align: left; cursor: pointer; font-family: var(--font-ui);
+    }
+    #panel-reviews .digest-toggle:hover .digest-name { color: var(--accent); }
+    #panel-reviews .digest-text { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+    #panel-reviews .digest-name { font-family: var(--font-ui); font-weight: 700; font-size: clamp(1.15rem, 2.6vw, 1.55rem); letter-spacing: -.01em; color: var(--ink); }
+    #panel-reviews .digest-meta { color: var(--muted); font-family: "IBM Plex Mono", monospace; font-size: .72rem; letter-spacing: .03em; }
+    #panel-reviews .digest-plus { font-size: 1.6rem; font-weight: 400; line-height: 1; color: var(--ink); transition: transform .22s ease; }
+    #panel-reviews .digest-toggle[aria-expanded="true"] .digest-plus { transform: rotate(45deg); }
+    #panel-reviews .digest-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; padding: 2px 0 24px; }
+    #panel-reviews .digest-cards[hidden] { display: none; }
+    @media (max-width: 700px) {
+      #panel-reviews .digest-cards { grid-template-columns: minmax(0, 1fr); }
+      #panel-reviews .digest-toggle { padding: 15px 4px; }
+    }
+
+    /* ---- Wordmark logo (inline SVG, transparent bg) ---- */
+    .wordmark { display: block; height: 36px; width: auto; }
+    .wordmark-compact { height: 26px; }
+
     /* ---- BOOKMARKS: "The Shelf" — tight favicon rows ---- */
     #bookmark-list { display: flex; flex-direction: column; gap: 10px; }
     #bookmark-list .utility-card.bookmark { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 13px 16px; border-radius: 12px; border-left: 3px solid var(--sec-accent); }
@@ -1805,8 +1830,13 @@
 <body>
   <header class="top-nav" id="top-nav">
     <div class="brand-lockup" aria-label="LinkLabz">
-      <span class="brand-mark" aria-hidden="true"><img src="assets/ravyn-mark.svg" alt="LinkLabz"></span>
-      <strong class="brand-name">Link<span>Labz</span></strong><span class="proto-badge">PROTOTYPE</span>
+      <svg class="wordmark" viewBox="0 0 240 84" aria-hidden="true" focusable="false">
+        <text x="8" y="60" font-family="'Libre Franklin', system-ui, sans-serif" font-size="46" font-weight="800" font-style="italic" letter-spacing="-0.5"><tspan style="fill:var(--ink)">Link</tspan><tspan style="fill:var(--accent)">Labz</tspan></text>
+        <g transform="translate(48,8) rotate(-18)" fill="none" style="stroke:var(--accent)" stroke-width="3.2" stroke-linecap="round">
+          <path d="M0,18 L0,8 Q0,1 7,1 Q14,1 14,8 L14,24 Q14,31 7,31 Q0,31 0,24 L0,16 Q0,12 4,12 Q8,12 8,16 L8,24"/>
+        </g>
+        <path transform="translate(216,14)" d="M0,-9 C1,-3.2 3.2,-1 9,0 C3.2,1 1,3.2 0,9 C-1,3.2 -3.2,1 -9,0 C-3.2,-1 -1,-3.2 0,-9 Z" style="fill:var(--accent)"/>
+      </svg><span class="proto-badge">PROTOTYPE</span>
     </div>
     <button class="command-trigger" id="command-trigger" type="button" aria-label="Open command bar" aria-haspopup="dialog">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="2"/><path d="m16 16 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
@@ -1815,8 +1845,13 @@
     <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Open navigation" aria-controls="workspace-nav" aria-expanded="false"><span class="nav-toggle-lines" aria-hidden="true"></span></button>
     <nav class="workspace-tabs" id="workspace-nav" aria-label="Workspace sections">
       <div class="nav-brand" aria-hidden="true">
-        <span class="brand-mark"><img src="assets/ravyn-mark.svg" alt=""></span>
-        <strong class="brand-name">Link<span>Labz</span></strong>
+        <svg class="wordmark wordmark-compact" viewBox="0 0 240 84" aria-hidden="true" focusable="false">
+        <text x="8" y="60" font-family="'Libre Franklin', system-ui, sans-serif" font-size="46" font-weight="800" font-style="italic" letter-spacing="-0.5"><tspan style="fill:var(--ink)">Link</tspan><tspan style="fill:var(--accent)">Labz</tspan></text>
+        <g transform="translate(48,8) rotate(-18)" fill="none" style="stroke:var(--accent)" stroke-width="3.2" stroke-linecap="round">
+          <path d="M0,18 L0,8 Q0,1 7,1 Q14,1 14,8 L14,24 Q14,31 7,31 Q0,31 0,24 L0,16 Q0,12 4,12 Q8,12 8,16 L8,24"/>
+        </g>
+        <path transform="translate(216,14)" d="M0,-9 C1,-3.2 3.2,-1 9,0 C3.2,1 1,3.2 0,9 C-1,3.2 -3.2,1 -9,0 C-3.2,-1 -1,-3.2 0,-9 Z" style="fill:var(--accent)"/>
+      </svg>
       </div>
       <div class="nav-group" data-nav-group="reviews">
         <button class="nav-group-head active" type="button" data-workspace="reviews" aria-expanded="false" aria-controls="nav-sub-reviews" title="Canonical home — decide where each review lives."><span class="nav-group-label">Reviews</span><span class="nav-count" id="tab-reviews-count">19</span><svg class="nav-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -1941,6 +1976,10 @@
         </div>
       </div>
       <div class="operator-help">Tip: each facet supports search and multi-select. Search operators still work: project:reWavz · hardware:1660 · found:Tony.</div>
+    </section>
+
+    <section class="digest" id="digest" aria-label="Review categories">
+      <div id="digest-rows"></div>
     </section>
 
     <section class="board" id="board" aria-label="Reviewed links">
@@ -3858,6 +3897,7 @@ DONE = install + Cursor connect + one prototype + export verified + verdict + re
         updateStats();
         renderFacetBar(visible.length);
         renderUtilities();
+        renderDigest();
         buildStack(visible);
       }
 
@@ -3944,6 +3984,53 @@ DONE = install + Cursor connect + one prototype + export verified + verdict + re
           stage.classList.remove("is-dragging"); startX = null; startY = null;
         });
       })();
+
+      /* ---- Reviews: expandable category digest ---- */
+      var digestOpen = {};
+      function digestGroups() {
+        var map = {};
+        reviews.forEach(function (item) {
+          var key = item.category || "uncategorized";
+          if (!map[key]) map[key] = { key: key, label: item.categoryLabel || key, items: [] };
+          map[key].items.push(item);
+        });
+        return Object.keys(map).map(function (k) { return map[k]; }).sort(function (a, b) {
+          if (b.items.length !== a.items.length) return b.items.length - a.items.length;
+          return a.label.localeCompare(b.label);
+        });
+      }
+      function digestTop(group) {
+        var top = null;
+        group.items.forEach(function (item) {
+          if (typeof item.rating === "number" && item.rating > 0 && (top === null || item.rating > top)) top = item.rating;
+        });
+        return top;
+      }
+      function renderDigest() {
+        var host = document.getElementById("digest-rows");
+        if (!host) return;
+        host.innerHTML = digestGroups().map(function (g) {
+          var top = digestTop(g);
+          var open = !!digestOpen[g.key];
+          var meta = g.items.length + (g.items.length === 1 ? " review" : " reviews") + (top !== null ? " \u00b7 top " + top.toFixed(1) + " \u2605" : "");
+          var cards = g.items.slice().sort(function (a, b) { return b.rating - a.rating; }).map(cardHtml).join("");
+          return '<div class="digest-row" data-cat="' + escapeHtml(g.key) + '">' +
+            '<button class="digest-toggle" type="button" aria-expanded="' + open + '" aria-controls="digest-cards-' + escapeHtml(g.key) + '">' +
+            '<span class="digest-text"><span class="digest-name">' + escapeHtml(g.label) + '</span>' +
+            '<span class="digest-meta">' + escapeHtml(meta) + '</span></span>' +
+            '<span class="digest-plus" aria-hidden="true">+</span></button>' +
+            '<div class="digest-cards" id="digest-cards-' + escapeHtml(g.key) + '"' + (open ? "" : " hidden") + '>' + cards + "</div></div>";
+        }).join("");
+      }
+      document.getElementById("digest-rows").addEventListener("click", function (event) {
+        var toggle = event.target.closest(".digest-toggle");
+        if (!toggle) return;
+        var key = toggle.closest(".digest-row").getAttribute("data-cat");
+        digestOpen[key] = !digestOpen[key];
+        toggle.setAttribute("aria-expanded", String(!!digestOpen[key]));
+        var panel = document.getElementById(toggle.getAttribute("aria-controls"));
+        if (panel) panel.hidden = !digestOpen[key];
+      });
 
       function getReview(id) {
         return reviews.find(function (item) { return item.id === id; });
