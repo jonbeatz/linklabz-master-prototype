@@ -159,10 +159,19 @@
       padding: 0;
       place-items: center;
       border: 1px solid var(--line);
-      border-radius: 10px;
-      background: rgba(255,255,255,.045);
+      border-radius: 12px;
+      background: rgba(255,255,255,.05);
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
       color: var(--ink);
       cursor: pointer;
+      transition: border-color .2s ease, color .2s ease, box-shadow .2s ease;
+    }
+    .top-nav.nav-open .nav-toggle {
+      border-color: rgba(232,163,23,.6);
+      color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(232,163,23,.25), 0 6px 18px rgba(217,142,27,.18), inset 0 1px 0 rgba(255,255,255,.08);
     }
 
     .nav-toggle-lines,
@@ -193,6 +202,13 @@
       -webkit-backdrop-filter: blur(3px);
     }
     .nav-scrim.open { display: block; }
+    @media (prefers-reduced-motion: reduce) {
+      .workspace-tabs, .nav-group, .nav-sub, .nav-chevron,
+      .nav-toggle, .nav-toggle-lines, .nav-toggle-lines::before, .nav-toggle-lines::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
 
     .overview {
       display: grid;
@@ -1185,7 +1201,8 @@
       margin: 0;
       padding: 0;
     }
-    .workspace-tab {
+    .nav-group { display: contents; }
+    .nav-group-head {
       min-height: 44px;
       padding: 7px 10px;
       border: 1px solid transparent;
@@ -1196,9 +1213,10 @@
       font-size: 12px;
       font-weight: 800;
     }
-    .workspace-tab span { margin-left: 5px; font-family: "IBM Plex Mono", monospace; }
-    .workspace-tab:hover { color: var(--ink); background: rgba(255,255,255,.045); }
-    .workspace-tab.active { color: #fff; background: var(--accent); border-color: var(--accent-strong); box-shadow: 0 8px 20px rgba(82,71,72,.18); }
+    .nav-group-head .nav-count { margin-left: 5px; font-family: "IBM Plex Mono", monospace; }
+    .nav-group-head:hover { color: var(--ink); background: rgba(255,255,255,.045); }
+    .nav-group-head.active { color: #fff; background: var(--accent); border-color: var(--accent-strong); box-shadow: 0 8px 20px rgba(82,71,72,.18); }
+    .nav-chevron, .nav-sub { display: none; }
     .workspace-panel[hidden] { display: none !important; }
 
     .utility-head {
@@ -1276,7 +1294,7 @@
       .card-list, .grid-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .top-nav { gap: 10px; }
       .command-trigger { padding-inline: 10px; }
-      .workspace-tab { padding-inline: 6px; font-size: 11px; }
+      .nav-group-head { padding-inline: 6px; font-size: 11px; }
     }
 
     @media (max-width: 720px) {
@@ -1296,36 +1314,89 @@
       .nav-toggle { display: grid; margin-left: 0; position: relative; z-index: 62; }
       .workspace-tabs {
         position: fixed;
-        inset: 0 0 0 auto;
-        z-index: 60;
-        width: min(86vw, 360px);
-        height: 100vh;
-        height: 100dvh;
-        display: none;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 48;
+        width: 100%;
+        max-height: 100dvh;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        display: flex;
         flex-direction: column;
-        gap: 8px;
-        padding: 86px 18px 24px;
-        background: rgba(18,20,23,.97);
-        border-left: 1px solid var(--line-strong);
-        box-shadow: -24px 0 70px rgba(0,0,0,.46);
-        transform: translateX(104%);
+        gap: 6px;
+        padding: 92px 14px 22px;
+        background: rgba(9, 10, 13, .78);
+        -webkit-backdrop-filter: blur(20px) saturate(140%);
+        backdrop-filter: blur(20px) saturate(140%);
+        border-bottom: 1px solid rgba(232, 163, 23, .22);
+        border-radius: 0 0 20px 20px;
+        box-shadow: 0 30px 70px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .05);
+        transform: translateY(-14px);
+        opacity: 0;
         visibility: hidden;
-        transition: transform .22s ease, visibility .22s;
+        transition: transform .26s ease, opacity .26s ease, visibility .26s;
       }
-      .top-nav.nav-open .workspace-tabs { display: flex; transform: translateX(0); visibility: visible; animation: menu-in .22s ease-out; }
-      @keyframes menu-in { from { transform: translateX(104%); } to { transform: translateX(0); } }
-      .workspace-tab {
-        flex: 0 0 auto;
+      .top-nav.nav-open .workspace-tabs { transform: none; opacity: 1; visibility: visible; }
+      .nav-group { display: block; opacity: 0; transform: translateY(-8px); transition: opacity .24s ease, transform .24s ease; }
+      .top-nav.nav-open .nav-group { opacity: 1; transform: none; }
+      .top-nav.nav-open .nav-group:nth-child(1) { transition-delay: .04s; }
+      .top-nav.nav-open .nav-group:nth-child(2) { transition-delay: .08s; }
+      .top-nav.nav-open .nav-group:nth-child(3) { transition-delay: .12s; }
+      .top-nav.nav-open .nav-group:nth-child(4) { transition-delay: .16s; }
+      .top-nav.nav-open .nav-group:nth-child(5) { transition-delay: .2s; }
+      .top-nav.nav-open .nav-group:nth-child(6) { transition-delay: .24s; }
+      .top-nav.nav-open .nav-group:nth-child(7) { transition-delay: .28s; }
+      .nav-group-head {
+        width: 100%;
         min-height: 52px;
-        padding: 0 16px;
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        text-align: left;
+        gap: 10px;
+        padding: 0 12px 0 16px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, .04);
+        color: var(--ink);
         font-size: 14px;
-        border-color: var(--line);
+        font-weight: 800;
+        text-align: left;
+        cursor: pointer;
       }
-      .workspace-tab.active { border-color: var(--accent-strong); }
+      .nav-group-label { flex: 1; }
+      .nav-count { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--muted); }
+      .nav-chevron { flex: 0 0 auto; color: var(--muted); transition: transform .25s ease, color .25s ease; }
+      .nav-group.open .nav-chevron { transform: rotate(180deg); color: var(--accent); }
+      .top-nav .nav-group-head.active {
+        border-color: rgba(232, 163, 23, .55);
+        background: linear-gradient(135deg, rgba(246, 196, 83, .16), rgba(217, 142, 27, .08));
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), 0 6px 18px rgba(217, 142, 27, .12);
+      }
+      .top-nav .nav-group-head.active .nav-group-label { background: var(--gold-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
+      .top-nav .nav-group-head.active .nav-count { color: var(--accent); }
+      .nav-sub { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .28s ease; }
+      .nav-group.open .nav-sub { grid-template-rows: 1fr; }
+      .nav-sub-inner { overflow: hidden; min-height: 0; display: flex; flex-direction: column; gap: 2px; }
+      .nav-group.open .nav-sub-inner { padding: 6px 4px 4px; }
+      .nav-sub button {
+        width: 100%;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 14px 0 18px;
+        border: 0;
+        border-radius: 10px;
+        background: transparent;
+        color: var(--muted);
+        font-size: 13.5px;
+        font-weight: 700;
+        text-align: left;
+        cursor: pointer;
+      }
+      .nav-sub button::before { content: ""; flex: 0 0 auto; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); opacity: .85; }
+      .nav-sub button:hover { color: var(--ink); background: rgba(255, 255, 255, .05); }
+      .nav-sub button:active { background: rgba(232, 163, 23, .12); }
       .overview { gap: 12px; margin-bottom: 12px; }
       .managebar { align-items: stretch; flex-direction: column; }
       .utility-head { align-items: stretch; flex-direction: column; }
@@ -1455,7 +1526,7 @@
     .brand-mark::before { content: "Z"; font: 800 25px/1 "Manrope", sans-serif; letter-spacing: -.1em; transform: skew(-11deg); text-shadow: 2px 2px 0 #6A6070, -1px -1px 0 #5B6F57; }
     .top-nav, .managebar, .facet-popover, .command-palette, .drawer, .drawer-control-strip, .drawer-actions { background: rgba(243,241,238,.94); }
     .nav-scrim, .modal-backdrop, .command-backdrop { background: rgba(13,13,13,.6); }
-    .workspace-tab.active, .manage-btn.primary, .brief-btn, .empty-action, .drawer-actions .source-btn { color: #f7f5f2; box-shadow: 0 8px 20px rgba(13,13,13,.16); }
+    .nav-group-head.active, .manage-btn.primary, .brief-btn, .empty-action, .drawer-actions .source-btn { color: #f7f5f2; box-shadow: 0 8px 20px rgba(13,13,13,.16); }
     .summary::after { border-color: rgba(82,71,72,.13); box-shadow: 0 0 70px rgba(82,71,72,.1); }
     .signal-dot { box-shadow: 0 0 0 5px var(--accent-soft), 0 0 22px rgba(82,71,72,.38); }
     .lane[data-lane="inbox"] { border-color: rgba(106,96,112,.3); background: linear-gradient(180deg, var(--cyan-soft), rgba(54,54,59,.05) 120px); }
@@ -1547,7 +1618,7 @@
     .view-btn.active { color: #141414; font-weight: 800; }
     .brief-btn { background: var(--gold-gradient); border-color: transparent; color: #141414; box-shadow: 0 9px 22px var(--gold-glow); }
     .brief-btn:hover { background: var(--gold-gradient); filter: brightness(1.07); }
-    .workspace-tab.active, .manage-btn.primary, .empty-action, .drawer-actions .source-btn { background: var(--gold-gradient); border-color: transparent; color: #141414; }
+    .nav-group-head.active, .manage-btn.primary, .empty-action, .drawer-actions .source-btn { background: var(--gold-gradient); border-color: transparent; color: #141414; }
     .phone-tabbar { background: rgba(13, 14, 18, .92); }
     .phone-tabbar button.active { color: var(--accent-strong); background: rgba(232, 163, 23, .14); border-color: rgba(232, 163, 23, .42); }
     .visual-anchor { background: linear-gradient(145deg, #2b2113, #14100a 60%, #0b0c0f); border-color: rgba(232, 163, 23, .4); color: var(--gold); font-family: var(--font-display); }
@@ -1578,13 +1649,55 @@
     </button>
     <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Open navigation" aria-controls="workspace-nav" aria-expanded="false"><span class="nav-toggle-lines" aria-hidden="true"></span></button>
     <nav class="workspace-tabs" id="workspace-nav" aria-label="Workspace sections">
-      <button class="workspace-tab active" type="button" data-workspace="reviews" title="Canonical home — decide where each review lives.">Reviews <span id="tab-reviews-count">8</span></button>
-      <button class="workspace-tab" type="button" data-workspace="bookmarks" title="Typed quick-saves when a full review ceremony is overkill.">Bookmarks <span id="tab-bookmarks-count">0</span></button>
-      <button class="workspace-tab" type="button" data-workspace="spitballs" title="Raw ideas before they deserve a lane.">Spitballs <span id="tab-spitballs-count">0</span></button>
-      <button class="workspace-tab" type="button" data-workspace="todos" title="Action queue tied to projects — severity, park, inline edit, clear done.">To-do <span id="tab-todos-count">0</span></button>
-      <button class="workspace-tab" type="button" data-workspace="favorites" title="Starred shortlist — reviews, bookmarks, and ideas you flagged.">Favorites <span id="tab-favorites-count">0</span></button>
-      <button class="workspace-tab" type="button" data-workspace="gradients" title="Saved gradient looks and experiments.">Gradients <span>12</span></button>
-      <button class="workspace-tab" type="button" data-workspace="tools" title="Manual spotlight of up to three tools — Card Swap UI lives here only, not on the main board.">Tools <span id="tab-tools-count">2</span></button>
+      <div class="nav-group" data-nav-group="reviews">
+        <button class="nav-group-head active" type="button" data-workspace="reviews" aria-expanded="false" aria-controls="nav-sub-reviews" title="Canonical home — decide where each review lives."><span class="nav-group-label">Reviews</span><span class="nav-count" id="tab-reviews-count">19</span><svg class="nav-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="nav-sub" id="nav-sub-reviews"><div class="nav-sub-inner">
+          <button type="button" data-sub="reviews-all">All reviews</button>
+          <button type="button" data-sub="reviews-promoted">Promoted</button>
+          <button type="button" data-sub="reviews-inbox">Needs verdict</button>
+        </div></div>
+      </div>
+      <div class="nav-group" data-nav-group="bookmarks">
+        <button class="nav-group-head" type="button" data-workspace="bookmarks" aria-expanded="false" aria-controls="nav-sub-bookmarks" title="Typed quick-saves when a full review ceremony is overkill."><span class="nav-group-label">Bookmarks</span><span class="nav-count" id="tab-bookmarks-count">7</span><svg class="nav-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="nav-sub" id="nav-sub-bookmarks"><div class="nav-sub-inner">
+          <button type="button" data-sub="bookmarks-all">All bookmarks</button>
+          <button type="button" data-sub="bookmarks-add">+ Add bookmark</button>
+        </div></div>
+      </div>
+      <div class="nav-group" data-nav-group="spitballs">
+        <button class="nav-group-head" type="button" data-workspace="spitballs" aria-expanded="false" aria-controls="nav-sub-spitballs" title="Raw ideas before they deserve a lane."><span class="nav-group-label">Spitballs</span><span class="nav-count" id="tab-spitballs-count">6</span><svg class="nav-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="nav-sub" id="nav-sub-spitballs"><div class="nav-sub-inner">
+          <button type="button" data-sub="spitballs-all">All spitballs</button>
+          <button type="button" data-sub="spitballs-add">+ Add idea</button>
+        </div></div>
+      </div>
+      <div class="nav-group" data-nav-group="todos">
+        <button class="nav-group-head" type="button" data-workspace="todos" aria-expanded="false" aria-controls="nav-sub-todos" title="Action queue tied to projects — severity, park, inline edit, clear done."><span class="nav-group-label">To-do</span><span class="nav-count" id="tab-todos-count">2</span><svg class="nav-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="nav-sub" id="nav-sub-todos"><div class="nav-sub-inner">
+          <button type="button" data-sub="todos-all">All tasks</button>
+          <button type="button" data-sub="todos-add">+ Add task</button>
+        </div></div>
+      </div>
+      <div class="nav-group" data-nav-group="favorites">
+        <button class="nav-group-head" type="button" data-workspace="favorites" aria-expanded="false" aria-controls="nav-sub-favorites" title="Starred shortlist — reviews, bookmarks, and ideas you flagged."><span class="nav-group-label">Favorites</span><span class="nav-count" id="tab-favorites-count">5</span><svg class="nav-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="nav-sub" id="nav-sub-favorites"><div class="nav-sub-inner">
+          <button type="button" data-sub="favorites-all">All favorites</button>
+          <button type="button" data-sub="favorites-browse">Browse reviews</button>
+        </div></div>
+      </div>
+      <div class="nav-group" data-nav-group="gradients">
+        <button class="nav-group-head" type="button" data-workspace="gradients" aria-expanded="false" aria-controls="nav-sub-gradients" title="Saved gradient looks and experiments."><span class="nav-group-label">Gradients</span><span class="nav-count">12</span><svg class="nav-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="nav-sub" id="nav-sub-gradients"><div class="nav-sub-inner">
+          <button type="button" data-sub="gradients-all">All gradients</button>
+        </div></div>
+      </div>
+      <div class="nav-group" data-nav-group="tools">
+        <button class="nav-group-head" type="button" data-workspace="tools" aria-expanded="false" aria-controls="nav-sub-tools" title="Manual spotlight of up to three tools — Card Swap UI lives here only, not on the main board."><span class="nav-group-label">Tools</span><span class="nav-count" id="tab-tools-count">2</span><svg class="nav-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="nav-sub" id="nav-sub-tools"><div class="nav-sub-inner">
+          <button type="button" data-sub="tools-all">All tools</button>
+          <button type="button" data-sub="tools-cardswap">Open Card Swap</button>
+        </div></div>
+      </div>
     </nav>
   </header>
   <div class="nav-scrim" id="nav-scrim" aria-hidden="true"></div>
@@ -3795,7 +3908,7 @@ DONE = install + Cursor connect + one prototype + export verified + verdict + re
         var mobile = window.innerWidth <= 720;
         var menu = document.getElementById("workspace-nav");
         menu.hidden = mobile && !open;
-        document.querySelectorAll(".workspace-tab").forEach(function (tab) { tab.disabled = mobile && !open; });
+        document.querySelectorAll(".nav-group-head").forEach(function (tab) { tab.disabled = mobile && !open; });
       }
 
       function setNavigation(open) {
@@ -3840,16 +3953,57 @@ DONE = install + Cursor connect + one prototype + export verified + verdict + re
         setNavigation(!document.getElementById("top-nav").classList.contains("nav-open"));
       });
       document.getElementById("nav-scrim").addEventListener("click", function () { setNavigation(false); });
-      document.querySelector(".workspace-tabs").addEventListener("click", function (event) {
-        var tab = event.target.closest("[data-workspace]");
-        if (!tab) return;
-        showWorkspace(tab.getAttribute("data-workspace"));
-        setNavigation(false);
-        var panel = document.querySelector('[data-panel="' + tab.getAttribute("data-workspace") + '"]');
+      var SUB_ACTIONS = {
+        "reviews-all":      { ws: "reviews",   run: function () { clearAllFilters(); showWorkspace("reviews"); render(); } },
+        "reviews-promoted": { ws: "reviews",   run: function () { promotedOnly = true; showWorkspace("reviews"); render(); } },
+        "reviews-inbox":    { ws: "reviews",   run: function () { facetSelections.lane = ["inbox"]; showWorkspace("reviews"); render(); } },
+        "bookmarks-all":    { ws: "bookmarks", run: function () { showWorkspace("bookmarks"); } },
+        "bookmarks-add":    { ws: "bookmarks", run: function () { showWorkspace("bookmarks"); openUtilityModal("bookmark"); } },
+        "spitballs-all":    { ws: "spitballs", run: function () { showWorkspace("spitballs"); } },
+        "spitballs-add":    { ws: "spitballs", run: function () { showWorkspace("spitballs"); openUtilityModal("spitball"); } },
+        "todos-all":        { ws: "todos",     run: function () { showWorkspace("todos"); } },
+        "todos-add":        { ws: "todos",     run: function () { showWorkspace("todos"); openUtilityModal("todo"); } },
+        "favorites-all":    { ws: "favorites", run: function () { showWorkspace("favorites"); } },
+        "favorites-browse": { ws: "reviews",   run: function () { clearAllFilters(); showWorkspace("reviews"); render(); } },
+        "gradients-all":    { ws: "gradients", run: function () { showWorkspace("gradients"); } },
+        "tools-all":        { ws: "tools",     run: function () { showWorkspace("tools"); } },
+        "tools-cardswap":   { ws: "tools",     run: function () { showWorkspace("tools"); window.open("card-concepts/index.html", "_blank", "noopener"); } }
+      };
+      function scrollToWorkspacePanel(name) {
+        var panel = document.querySelector('[data-panel="' + name + '"]');
         if (panel) {
           var offset = window.innerWidth <= 720 ? 78 : 86;
           window.scrollTo({ top: Math.max(0, panel.getBoundingClientRect().top + window.scrollY - offset), behavior: "smooth" });
         }
+      }
+      document.querySelector(".workspace-tabs").addEventListener("click", function (event) {
+        var mobile = window.innerWidth <= 720;
+        var sub = event.target.closest("[data-sub]");
+        if (sub) {
+          var action = SUB_ACTIONS[sub.getAttribute("data-sub")];
+          if (action) {
+            setNavigation(false);
+            action.run();
+            scrollToWorkspacePanel(action.ws);
+          }
+          return;
+        }
+        var head = event.target.closest(".nav-group-head");
+        if (!head) return;
+        if (mobile) {
+          var group = head.closest(".nav-group");
+          var wasOpen = group.classList.contains("open");
+          document.querySelectorAll(".nav-group.open").forEach(function (g) {
+            g.classList.remove("open");
+            g.querySelector(".nav-group-head").setAttribute("aria-expanded", "false");
+          });
+          if (!wasOpen) { group.classList.add("open"); head.setAttribute("aria-expanded", "true"); }
+        } else {
+          showWorkspace(head.getAttribute("data-workspace"));
+        }
+      });
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && document.getElementById("top-nav").classList.contains("nav-open")) setNavigation(false);
       });
 
       document.getElementById("search").addEventListener("input", function (event) {
