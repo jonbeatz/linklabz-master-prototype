@@ -1,0 +1,2270 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <link rel="icon" href="../brand/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../brand/favicon-32.png" sizes="32x32" type="image/png" />
+  <link rel="apple-touch-icon" href="../brand/apple-touch-icon.png" />
+  <meta property="og:title" content="LinkLabz — Card Layout Concepts" />
+  <meta property="og:description" content="Tactile card-layout experiments over 19 live LinkLabz reviews: Card Swap, Cover Flow, Filter Lab, Priority Queue and more." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://jonbeatz.github.io/linklabz-trinity-preview/brand/og.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <title>LinkLabz Card Layout Concepts</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #1c1c1c;
+      --bg-deep: #0d0d0d;
+      --surface: rgba(54, 54, 59, .94);
+      --surface-solid: #343439;
+      --surface-soft: rgba(43, 43, 46, .74);
+      --text: #f2f0ed;
+      --muted: #c0bbb5;
+      --faint: #96918b;
+      --line: rgba(242, 240, 237, .12);
+      --line-strong: rgba(242, 240, 237, .24);
+      --control: #f2f0ed;
+      --control-text: #1c1c1c;
+      --accent: #d2a84a;
+      --shadow: 0 28px 76px rgba(0, 0, 0, .52), 0 8px 24px rgba(0, 0, 0, .26);
+      --shadow-soft: 0 18px 50px rgba(0, 0, 0, .34);
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root[data-theme="light"] {
+        color-scheme: light;
+        --bg: #e7e3de;
+        --bg-deep: #d9d4cd;
+        --surface: rgba(250, 248, 245, .94);
+        --surface-solid: #f8f6f2;
+        --surface-soft: rgba(255, 255, 255, .48);
+        --text: #242321;
+        --muted: #625f5a;
+        --faint: #78736d;
+        --line: rgba(23, 22, 21, .14);
+        --line-strong: rgba(23, 22, 21, .24);
+        --control: #2a2927;
+        --control-text: #f5f2ed;
+        --accent: #796221;
+        --shadow: 0 26px 70px rgba(35, 32, 29, .20), 0 6px 20px rgba(35, 32, 29, .12);
+        --shadow-soft: 0 16px 45px rgba(35, 32, 29, .14);
+      }
+    }
+
+    * { box-sizing: border-box; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 0;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 18% 9%, color-mix(in srgb, var(--surface-solid) 54%, transparent) 0, transparent 28rem),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%);
+      color: var(--text);
+      font-family: "Manrope", sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { font: inherit; }
+    a { color: inherit; }
+    .page {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: max(32px, env(safe-area-inset-top)) 0 max(88px, env(safe-area-inset-bottom));
+    }
+
+    .intro {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 28px;
+      align-items: end;
+      padding: 34px 0 42px;
+      border-bottom: 1px solid var(--line);
+    }
+    .eyebrow, .section-index, .meta-label, .counter, .nav-link, .category {
+      font-family: "IBM Plex Mono", monospace;
+    }
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--faint);
+      font-size: .73rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    h1 {
+      max-width: 770px;
+      margin: 0;
+      font-size: clamp(2.25rem, 5vw, 4.5rem);
+      line-height: .98;
+      letter-spacing: -.055em;
+      font-weight: 600;
+    }
+    .lede {
+      max-width: 680px;
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: clamp(.98rem, 1.7vw, 1.12rem);
+    }
+    .section-nav {
+      display: grid;
+      gap: 9px;
+      min-width: 190px;
+    }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface-soft);
+      color: var(--muted);
+      font-size: .78rem;
+      text-decoration: none;
+      transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+    }
+    .nav-link:hover, .nav-link:focus-visible {
+      color: var(--text);
+      border-color: var(--line-strong);
+      background: var(--surface);
+      outline: none;
+    }
+    .nav-link span:last-child { font-size: 1rem; }
+
+    .overview {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(280px, .75fr);
+      gap: clamp(32px, 6vw, 84px);
+      padding: 64px 0 28px;
+      scroll-margin-top: 12px;
+    }
+    .overview h2 {
+      max-width: 720px;
+      margin-bottom: 22px;
+    }
+    .overview-copy {
+      max-width: 720px;
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 1.8vw, 1.16rem);
+      line-height: 1.72;
+    }
+    .reference-key {
+      align-self: start;
+      padding: 22px;
+      border-top: 1px solid var(--line-strong);
+      border-bottom: 1px solid var(--line);
+    }
+    .reference-key h3 {
+      margin: 0 0 16px;
+      font-size: 1rem;
+      letter-spacing: -.01em;
+    }
+    .key-list {
+      display: grid;
+      gap: 12px;
+      margin: 0 0 18px;
+      padding: 0;
+      list-style: none;
+    }
+    .key-list li {
+      display: grid;
+      grid-template-columns: 70px 1fr;
+      gap: 12px;
+      align-items: baseline;
+      color: var(--muted);
+      font-size: .78rem;
+    }
+    .key-term {
+      color: var(--text);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: .68rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .text-button, .learn-more {
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--accent);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: .72rem;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      cursor: pointer;
+    }
+    .text-button:hover, .learn-more:hover { color: var(--text); }
+    .text-button:focus-visible, .learn-more:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+    .concept {
+      min-height: 720px;
+      padding: 82px 0 70px;
+      border-bottom: 1px solid var(--line);
+      scroll-margin-top: 12px;
+    }
+    .concept:last-of-type { border-bottom: 0; }
+    .section-heading {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(250px, 390px);
+      gap: 36px;
+      align-items: end;
+      margin-bottom: 48px;
+    }
+    .section-index {
+      display: inline-block;
+      margin-bottom: 12px;
+      color: var(--faint);
+      font-size: .76rem;
+    }
+    h2 {
+      margin: 0;
+      font-size: clamp(2rem, 4.2vw, 3.6rem);
+      line-height: 1;
+      letter-spacing: -.045em;
+      font-weight: 600;
+    }
+    .section-copy {
+      margin: 0;
+      color: var(--muted);
+      font-size: .97rem;
+    }
+    .section-use {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 16px;
+      margin: -24px 0 34px;
+      color: var(--faint);
+      font-size: .78rem;
+    }
+    .section-use strong {
+      color: var(--text);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: .68rem;
+      font-weight: 500;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .stage-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 210px;
+      gap: clamp(28px, 5vw, 70px);
+      align-items: center;
+    }
+    .swap-stage {
+      position: relative;
+      width: min(100%, 660px);
+      height: 505px;
+      margin: 0 auto;
+      perspective: 1200px;
+      user-select: none;
+      touch-action: pan-y;
+    }
+    .review-card {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: min(100%, 520px);
+      min-height: 430px;
+      padding: clamp(23px, 4vw, 34px);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--surface-solid);
+      box-shadow: var(--shadow);
+      color: var(--text);
+      overflow: hidden;
+    }
+    .swap-card {
+      transform-origin: 50% 100%;
+      transition: transform .52s cubic-bezier(.2,.78,.2,1), opacity .36s ease, filter .36s ease;
+      cursor: pointer;
+    }
+    .swap-card.is-moving {
+      transform: translate(-50%, -80px) rotate(-5deg) scale(.98) !important;
+      opacity: 0 !important;
+      pointer-events: none;
+    }
+    .swap-card[aria-hidden="true"] { pointer-events: none; }
+    .card-topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .category {
+      color: var(--faint);
+      font-size: .7rem;
+      line-height: 1.3;
+      letter-spacing: .045em;
+      text-transform: uppercase;
+    }
+    .verdict {
+      flex: 0 0 auto;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: .68rem;
+      line-height: 1;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .verdict.try { color: #9aaa95; background: rgba(91,111,87,.3); }
+    .verdict.parked { color: #c9bda6; background: rgba(90,84,75,.35); }
+    .verdict.skipped { color: #8f8d8c; background: rgba(82,78,77,.35); }
+    .review-card h3 {
+      margin: 0;
+      max-width: 95%;
+      font-size: clamp(1.42rem, 3vw, 2.12rem);
+      line-height: 1.12;
+      letter-spacing: -.035em;
+      font-weight: 600;
+    }
+    .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 15px;
+      margin: 17px 0 22px;
+      color: var(--muted);
+      font-size: .78rem;
+    }
+    .rating {
+      color: var(--accent);
+      font-family: "IBM Plex Mono", monospace;
+      white-space: nowrap;
+    }
+    .project {
+      position: relative;
+      padding-left: 15px;
+    }
+    .project::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--faint);
+      transform: translateY(-50%);
+    }
+    .why {
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(.92rem, 1.7vw, 1.03rem);
+      line-height: 1.65;
+    }
+    .open-link {
+      position: absolute;
+      left: clamp(23px, 4vw, 34px);
+      bottom: clamp(23px, 4vw, 32px);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 40px;
+      padding: 0 14px;
+      border: 1px solid var(--line-strong);
+      border-radius: 9px;
+      background: transparent;
+      color: var(--text);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: .72rem;
+      text-decoration: none;
+      transition: background-color .2s ease, border-color .2s ease;
+    }
+    .open-link:hover, .open-link:focus-visible {
+      background: var(--surface-soft);
+      border-color: var(--text);
+      outline: none;
+    }
+    .open-link::after { content: "↗"; font-size: .9rem; }
+
+    .controls {
+      display: grid;
+      align-content: center;
+      gap: 15px;
+    }
+    .counter {
+      margin: 0 0 2px;
+      color: var(--faint);
+      font-size: .78rem;
+      letter-spacing: .04em;
+      text-align: center;
+    }
+    .control-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .control-btn {
+      min-height: 46px;
+      padding: 0 16px;
+      border: 1px solid var(--line-strong);
+      border-radius: 10px;
+      background: var(--surface-soft);
+      color: var(--text);
+      cursor: pointer;
+      transition: background-color .2s ease, color .2s ease, border-color .2s ease, transform .15s ease;
+    }
+    .control-btn:hover { background: var(--surface); border-color: var(--text); }
+    .control-btn:active { transform: translateY(1px); }
+    .control-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .control-btn.primary {
+      width: 100%;
+      background: var(--control);
+      border-color: var(--control);
+      color: var(--control-text);
+      font-weight: 700;
+    }
+    .hint {
+      margin: 4px 0 0;
+      color: var(--faint);
+      font-size: .72rem;
+      line-height: 1.55;
+      text-align: center;
+    }
+
+    .flow-shell {
+      position: relative;
+      min-width: 0;
+      padding: 8px 0 28px;
+      border-radius: 18px;
+      outline: none;
+      overflow: hidden;
+    }
+    .flow-shell:focus-visible { box-shadow: inset 0 0 0 2px var(--line-strong); }
+    .flow-stage {
+      position: relative;
+      height: 510px;
+      perspective: 1150px;
+      transform-style: preserve-3d;
+      user-select: none;
+      touch-action: pan-y;
+      cursor: grab;
+      transition: transform .18s ease;
+    }
+    .flow-stage.is-dragging { cursor: grabbing; transition: none; }
+    .flow-card {
+      position: absolute;
+      left: 50%;
+      top: 6px;
+      width: min(440px, 48vw);
+      min-height: 422px;
+      transform-origin: 50% 50%;
+      transition: transform .58s cubic-bezier(.2,.76,.2,1), opacity .44s ease, filter .44s ease;
+      cursor: pointer;
+      will-change: transform, opacity;
+    }
+    .flow-card::after {
+      content: "";
+      position: absolute;
+      left: 8%;
+      right: 8%;
+      top: calc(100% + 16px);
+      height: 76px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, color-mix(in srgb, var(--surface-solid) 18%, transparent), transparent 74%);
+      opacity: .5;
+      filter: blur(10px);
+      pointer-events: none;
+    }
+    .flow-card:not(.is-center) .open-link { display: none; }
+    .flow-card[aria-hidden="true"] { pointer-events: none; }
+    .flow-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 6px;
+    }
+    .arrow-btn {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      padding: 0;
+      border: 1px solid var(--line-strong);
+      border-radius: 50%;
+      background: var(--surface-soft);
+      color: var(--text);
+      font-size: 1.15rem;
+      cursor: pointer;
+      transition: background-color .2s ease, border-color .2s ease, transform .15s ease;
+    }
+    .arrow-btn:hover { background: var(--surface); border-color: var(--text); }
+    .arrow-btn:active { transform: scale(.96); }
+    .arrow-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .flow-counter { min-width: 86px; margin: 0; }
+    .keyboard-hint {
+      margin: 12px 0 0;
+      color: var(--faint);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: .68rem;
+      text-align: center;
+    }
+
+    .back-top {
+      display: flex;
+      justify-content: center;
+      padding-top: 34px;
+    }
+    .back-top a {
+      color: var(--muted);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: .72rem;
+      text-decoration: none;
+    }
+    .back-top a:hover, .back-top a:focus-visible { color: var(--text); outline: none; text-decoration: underline; }
+
+    /* GodUI-inspired interaction studies, translated to framework-free HTML/CSS/JS. */
+    .section-nav { position: relative; align-self: end; }
+    .nav-menu-trigger { width: 100%; cursor: pointer; text-align: left; }
+    .nav-menu {
+      position: absolute;
+      z-index: 100;
+      right: 0;
+      top: calc(100% + 10px);
+      width: min(560px, 78vw);
+      padding: 12px;
+      border: 1px solid var(--line-strong);
+      border-radius: 14px;
+      background: var(--surface-solid);
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+    }
+    .nav-menu[hidden] { display: none; }
+    .nav-menu a {
+      display: grid;
+      gap: 2px;
+      padding: 12px;
+      border-radius: 9px;
+      text-decoration: none;
+    }
+    .nav-menu a:hover, .nav-menu a:focus-visible { background: var(--surface-soft); outline: none; }
+    .nav-menu strong { font-size: .82rem; }
+    .nav-menu span { color: var(--faint); font-size: .7rem; }
+
+    .command-shell {
+      position: relative;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--surface-soft);
+    }
+    .filter-topline {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: start;
+    }
+    .tab-bar {
+      display: inline-flex;
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: color-mix(in srgb, var(--bg-deep) 58%, transparent);
+    }
+    .tab-btn {
+      min-height: 38px;
+      padding: 0 14px;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: .71rem;
+    }
+    .tab-btn[aria-selected="true"] { background: var(--control); color: var(--control-text); }
+    .tab-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .combo-wrap { position: relative; width: min(100%, 320px); }
+    .combo-input {
+      width: 100%;
+      min-height: 46px;
+      padding: 0 42px 0 14px;
+      border: 1px solid var(--line-strong);
+      border-radius: 10px;
+      background: var(--surface-solid);
+      color: var(--text);
+      font: inherit;
+      font-size: .83rem;
+    }
+    .combo-input:focus { border-color: var(--text); outline: none; }
+    .combo-mark { position: absolute; top: 12px; right: 14px; color: var(--faint); pointer-events: none; }
+    .combo-list {
+      position: absolute;
+      z-index: 90;
+      top: calc(100% + 7px);
+      left: 0;
+      right: 0;
+      max-height: 250px;
+      padding: 6px;
+      border: 1px solid var(--line-strong);
+      border-radius: 11px;
+      background: var(--surface-solid);
+      box-shadow: var(--shadow-soft);
+      overflow-y: auto;
+    }
+    .combo-list[hidden] { display: none; }
+    .combo-option {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      width: 100%;
+      padding: 10px;
+      border: 0;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+      font-size: .8rem;
+    }
+    .combo-option:hover, .combo-option:focus-visible { background: var(--surface-soft); outline: none; }
+    .combo-option span:last-child { color: var(--faint); font-family: "IBM Plex Mono", monospace; font-size: .68rem; }
+    .facet-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .facet-btn {
+      min-height: 36px;
+      padding: 0 11px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: .74rem;
+    }
+    .facet-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--text); background: color-mix(in srgb, var(--accent) 13%, transparent); }
+    .result-line { display: flex; justify-content: space-between; gap: 16px; margin: 18px 2px 12px; color: var(--faint); font-family: "IBM Plex Mono", monospace; font-size: .7rem; }
+    .result-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .result-card {
+      position: relative;
+      min-width: 0;
+      min-height: 168px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--surface-solid);
+    }
+    .result-card h3 { margin: 12px 34px 10px 0; font-size: 1rem; line-height: 1.25; letter-spacing: -.02em; }
+    .result-card p { margin: 0; color: var(--muted); font-size: .76rem; line-height: 1.5; }
+    .result-actions { position: absolute; top: 12px; right: 10px; }
+    .more-btn {
+      width: 40px; height: 40px; padding: 0; border: 0; border-radius: 50%; background: transparent;
+      color: var(--muted); font-size: 1.2rem; cursor: pointer;
+    }
+    .more-btn:hover, .more-btn:focus-visible { background: var(--surface-soft); color: var(--text); outline: none; }
+    .action-menu {
+      position: absolute; z-index: 50; top: 36px; right: 0; width: 175px; padding: 6px;
+      border: 1px solid var(--line-strong); border-radius: 10px; background: var(--surface-solid); box-shadow: var(--shadow-soft);
+    }
+    .action-menu[hidden] { display: none; }
+    .action-menu button, .action-menu a { display: block; width: 100%; padding: 9px 10px; border: 0; border-radius: 7px; background: transparent; color: var(--text); text-align: left; text-decoration: none; cursor: pointer; font-size: .75rem; }
+    .action-menu button:hover, .action-menu a:hover, .action-menu button:focus-visible, .action-menu a:focus-visible { background: var(--surface-soft); outline: none; }
+    .empty-result { grid-column: 1 / -1; padding: 34px; border-top: 1px solid var(--line); color: var(--muted); text-align: center; }
+
+    .accordion-list { border-top: 1px solid var(--line-strong); }
+    .accordion-item { border-bottom: 1px solid var(--line); }
+    .accordion-trigger {
+      display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 18px; align-items: center;
+      width: 100%; padding: 22px 4px; border: 0; background: transparent; color: var(--text); text-align: left; cursor: pointer;
+    }
+    .accordion-trigger strong { font-size: clamp(1.05rem, 2vw, 1.35rem); font-weight: 600; }
+    .accordion-trigger span { color: var(--faint); font-family: "IBM Plex Mono", monospace; font-size: .7rem; }
+    .accordion-trigger b { font-size: 1.2rem; font-weight: 400; transition: transform .25s ease; }
+    .accordion-trigger[aria-expanded="true"] b { transform: rotate(45deg); }
+    .accordion-panel { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 0 0 20px; }
+    .accordion-panel[hidden] { display: none; }
+    .digest-card { padding: 15px; border-radius: 10px; background: var(--surface-soft); }
+    .digest-card h4 { margin: 8px 0 7px; font-size: .9rem; }
+    .digest-card p { margin: 0; color: var(--muted); font-size: .73rem; }
+
+    .queue-shell { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 30px; align-items: start; }
+    .queue-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+    .queue-item {
+      display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto; gap: 14px; align-items: center;
+      padding: 14px; border: 1px solid var(--line); border-radius: 11px; background: var(--surface-solid);
+    }
+    .queue-rank { color: var(--accent); font-family: "IBM Plex Mono", monospace; font-size: .75rem; }
+    .queue-item strong { display: block; margin-bottom: 2px; font-size: .9rem; }
+    .queue-item span { color: var(--faint); font-size: .72rem; }
+    .queue-movers { display: flex; gap: 5px; }
+    .queue-movers button { width: 34px; height: 34px; padding: 0; border: 1px solid var(--line); border-radius: 8px; background: transparent; color: var(--text); cursor: pointer; }
+    .queue-movers button:disabled { opacity: .28; cursor: default; }
+    .queue-note { padding: 20px; border-top: 1px solid var(--line-strong); border-bottom: 1px solid var(--line); }
+    .queue-note h3 { margin: 0 0 10px; font-size: 1rem; }
+    .queue-note p { margin: 0; color: var(--muted); font-size: .8rem; }
+
+    .finish-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .finish-card { position: relative; min-height: 340px; padding: 28px; border-radius: 18px; overflow: hidden; }
+    .finish-card h3 { margin: 110px 0 10px; font-size: clamp(1.35rem, 3vw, 2rem); }
+    .finish-card p { margin: 0; max-width: 38ch; color: rgba(255,255,255,.76); }
+    .holo-card {
+      --px: 50%; --py: 50%;
+      background: linear-gradient(135deg, #202124, #3f3c32 45%, #1a1b1c);
+      border: 1px solid rgba(255,255,255,.19);
+      box-shadow: var(--shadow);
+      transform-style: preserve-3d;
+      transition: transform .12s ease;
+    }
+    .holo-card::before {
+      content: ""; position: absolute; inset: -35%; pointer-events: none; opacity: .72;
+      background: radial-gradient(circle at var(--px) var(--py), rgba(255,255,255,.72), rgba(210,168,74,.3) 12%, rgba(182,74,46,.16) 28%, transparent 48%);
+      mix-blend-mode: screen;
+    }
+    .foil-label { position: relative; color: rgba(255,255,255,.67); font-family: "IBM Plex Mono", monospace; font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; }
+    .holo-card > * { position: relative; z-index: 1; }
+    .liquid-scene {
+      display: grid; place-items: center;
+      background: radial-gradient(circle at 20% 25%, #9a6b2a, transparent 24%), radial-gradient(circle at 78% 72%, #7b2f22, transparent 30%), #171719;
+    }
+    .liquid-card {
+      width: min(88%, 380px); min-height: 230px; padding: 26px; border: 1px solid rgba(255,255,255,.3); border-radius: 28px;
+      background: linear-gradient(135deg, rgba(255,255,255,.2), rgba(255,255,255,.06));
+      box-shadow: inset 0 1px rgba(255,255,255,.28), 0 22px 55px rgba(0,0,0,.38);
+      backdrop-filter: blur(18px) saturate(1.2);
+    }
+    .liquid-card h3 { margin-top: 52px; }
+    .finish-caption { margin-top: 14px; color: var(--faint); font-size: .75rem; }
+
+    .gooey-tools { position: fixed; z-index: 120; right: max(18px, env(safe-area-inset-right)); bottom: max(18px, env(safe-area-inset-bottom)); display: grid; justify-items: end; gap: 8px; }
+    .gooey-menu { display: grid; gap: 7px; justify-items: end; }
+    .gooey-menu[hidden] { display: none; }
+    .gooey-action, .gooey-trigger { border: 1px solid var(--line-strong); background: var(--surface-solid); color: var(--text); box-shadow: var(--shadow-soft); cursor: pointer; }
+    .gooey-action { min-height: 38px; padding: 0 13px; border-radius: 999px; font-size: .72rem; }
+    .gooey-trigger { width: 50px; height: 50px; border-radius: 50%; font-size: 1.18rem; }
+    .gooey-trigger[aria-expanded="true"] { background: var(--control); color: var(--control-text); }
+
+    .help-dialog {
+      width: min(620px, calc(100% - 28px));
+      max-height: min(78vh, 720px);
+      padding: 0;
+      border: 1px solid var(--line-strong);
+      border-radius: 16px;
+      background: var(--surface-solid);
+      color: var(--text);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .help-dialog::backdrop {
+      background: rgba(0, 0, 0, .72);
+      backdrop-filter: blur(5px);
+    }
+    .dialog-head {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 22px;
+      padding: 24px 26px 20px;
+      border-bottom: 1px solid var(--line);
+    }
+    .dialog-kicker {
+      margin: 0 0 7px;
+      color: var(--accent);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: .68rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .dialog-head h2 {
+      font-size: clamp(1.55rem, 4vw, 2.3rem);
+      line-height: 1.08;
+    }
+    .dialog-close {
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--line-strong);
+      border-radius: 50%;
+      background: transparent;
+      color: var(--text);
+      font-size: 1.15rem;
+      cursor: pointer;
+    }
+    .dialog-close:hover { background: var(--surface-soft); }
+    .dialog-close:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .dialog-body {
+      max-height: calc(min(78vh, 720px) - 100px);
+      padding: 24px 26px 30px;
+      overflow-y: auto;
+    }
+    .dialog-body p { margin: 0 0 17px; color: var(--muted); }
+    .dialog-body p:last-child { margin-bottom: 0; }
+    .dialog-body strong { color: var(--text); }
+
+    @media (max-width: 820px) {
+      .intro, .overview, .section-heading { grid-template-columns: 1fr; }
+      .section-nav { grid-template-columns: 1fr 1fr; min-width: 0; }
+      .section-nav .nav-link:first-child { grid-column: 1 / -1; }
+      .overview { padding-top: 50px; }
+      .section-heading { gap: 17px; margin-bottom: 38px; }
+      .stage-layout { grid-template-columns: 1fr; gap: 30px; }
+      .controls { width: min(100%, 400px); margin: 0 auto; }
+      .concept { min-height: auto; }
+      .flow-card { width: min(420px, 62vw); }
+    }
+
+    @media (max-width: 560px) {
+      .page { width: min(100% - 28px, 1180px); padding-top: 18px; }
+      .intro { gap: 24px; padding: 26px 0 34px; }
+      h1 { font-size: clamp(2.05rem, 11vw, 3rem); }
+      .section-nav { gap: 7px; }
+      .nav-link { padding: 11px 10px; font-size: .68rem; }
+      .concept { padding: 58px 0 48px; }
+      .section-heading { margin-bottom: 30px; }
+      .section-use { margin-top: -14px; margin-bottom: 28px; }
+      .reference-key { padding-inline: 0; }
+      .dialog-head, .dialog-body { padding-left: 20px; padding-right: 20px; }
+      .swap-stage { height: 485px; }
+      .review-card { min-height: 410px; }
+      .card-topline { margin-bottom: 24px; }
+      .review-card h3 { font-size: 1.43rem; }
+      .why { font-size: .88rem; line-height: 1.55; }
+      .flow-shell { margin-inline: -14px; border-radius: 0; }
+      .flow-stage { height: 472px; }
+      .flow-card { width: min(310px, 79vw); min-height: 400px; padding: 22px; }
+      .flow-card .open-link { left: 22px; bottom: 22px; }
+      .keyboard-hint { display: none; }
+    }
+
+    @media (max-width: 820px) {
+      .filter-topline, .queue-shell { grid-template-columns: 1fr; }
+      .combo-wrap { width: 100%; }
+      .result-grid, .accordion-panel { grid-template-columns: 1fr 1fr; }
+      .finish-grid { grid-template-columns: 1fr; }
+      .finish-card { min-height: 310px; }
+    }
+
+    @media (max-width: 560px) {
+      .nav-menu { position: fixed; left: 14px; right: 14px; top: 72px; width: auto; grid-template-columns: 1fr; max-height: calc(100vh - 96px); overflow-y: auto; }
+      .tab-bar { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
+      .facet-row { flex-wrap: wrap; padding-bottom: 2px; }
+      .facet-btn { flex: 0 0 auto; }
+      .result-grid, .accordion-panel { grid-template-columns: 1fr; }
+      .command-shell { padding: 12px; }
+      .accordion-trigger { grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+      .accordion-trigger span { grid-column: 1; }
+      .accordion-trigger b { grid-column: 2; grid-row: 1 / span 2; }
+      .queue-item { grid-template-columns: auto auto minmax(0, 1fr); }
+      .queue-movers { grid-column: 3; }
+      .finish-card { padding: 22px; border-radius: 14px; }
+      .finish-card h3 { margin-top: 92px; }
+      .gooey-tools { right: 14px; bottom: 14px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
+
+    /* ——— Harvest: GodUI keepers (facet counts + marks popover, project combobox,
+           card menu upgrade, drag reorder, workspace menu, stat pills, shared logo) ——— */
+    .brand-mark { display: inline-block; margin-bottom: 16px; }
+    .brand-mark img { display: block; height: 34px; width: auto; }
+
+    .stat-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 4px; }
+    .stat-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      min-height: 36px; padding: 0 13px;
+      border: 1px solid var(--line); border-radius: 999px;
+      background: transparent; color: var(--muted);
+      font-family: "IBM Plex Mono", monospace; font-size: .7rem; letter-spacing: .02em;
+      cursor: pointer;
+    }
+    .stat-pill:hover { color: var(--text); border-color: var(--line-strong); }
+    .stat-pill:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .stat-pill b { color: var(--text); font-weight: 500; }
+    .stat-pill[aria-pressed="true"] {
+      border-color: var(--accent); color: var(--text);
+      background: color-mix(in srgb, var(--accent) 13%, transparent);
+    }
+
+    .marks-wrap { position: relative; display: inline-flex; align-items: center; gap: 6px; }
+    .marks-clear {
+      display: grid; place-items: center; width: 36px; height: 36px; padding: 0;
+      border: 1px solid var(--line); border-radius: 50%;
+      background: transparent; color: var(--muted); font-size: 1rem; line-height: 1; cursor: pointer;
+    }
+    .marks-clear[hidden] { display: none; }
+    .marks-clear:hover, .marks-clear:focus-visible { color: var(--text); border-color: var(--line-strong); outline: none; }
+    .marks-clear:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .marks-pop {
+      position: absolute; z-index: 90; top: calc(100% + 8px); left: 0;
+      min-width: 212px; padding: 8px;
+      border: 1px solid var(--line-strong); border-radius: 11px;
+      background: var(--surface-solid); box-shadow: var(--shadow-soft);
+    }
+    .marks-pop[hidden] { display: none; }
+    .mark-check {
+      display: flex; align-items: center; gap: 10px;
+      min-height: 40px; padding: 0 10px; border-radius: 8px;
+      font-size: .8rem; cursor: pointer;
+    }
+    .mark-check:hover { background: var(--surface-soft); }
+    .mark-check input { width: 17px; height: 17px; accent-color: var(--accent); }
+    .mark-count { margin-left: auto; color: var(--faint); font-family: "IBM Plex Mono", monospace; font-size: .68rem; }
+
+    .project-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; margin-top: 14px; }
+    .project-combo { position: relative; max-width: 340px; }
+    .proj-list { list-style: none; margin: 0; }
+    .proj-row { display: flex; align-items: center; gap: 4px; }
+    .proj-option {
+      flex: 1 1 auto; display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      min-height: 40px; padding: 6px 10px; border: 0; border-radius: 7px;
+      background: transparent; color: var(--text); text-align: left; cursor: pointer; font-size: .8rem;
+    }
+    .proj-option:hover, .proj-option:focus-visible { background: var(--surface-soft); outline: none; }
+    .proj-option[aria-selected="true"] .proj-label { color: var(--accent); }
+    .proj-label mark { background: color-mix(in srgb, var(--accent) 38%, transparent); color: inherit; border-radius: 3px; padding: 0 1px; }
+    .proj-count { color: var(--faint); font-family: "IBM Plex Mono", monospace; font-size: .68rem; }
+    .proj-pin {
+      flex: 0 0 auto; width: 36px; height: 36px; padding: 0; border: 0; border-radius: 7px;
+      background: transparent; font-size: .95rem; cursor: pointer; opacity: .38;
+    }
+    .proj-pin[aria-pressed="true"] { opacity: 1; }
+    .proj-pin:hover, .proj-pin:focus-visible { background: var(--surface-soft); opacity: 1; outline: none; }
+    .proj-pin:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+    .proj-empty { padding: 12px 10px; color: var(--faint); font-size: .78rem; }
+    .pin-toggle {
+      display: inline-flex; align-items: center; gap: 9px;
+      min-height: 36px; color: var(--muted); font-size: .76rem; cursor: pointer; white-space: nowrap;
+    }
+    .pin-toggle input { width: 17px; height: 17px; accent-color: var(--accent); }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .chip-row[hidden] { display: none; }
+    .proj-chip {
+      display: inline-flex; align-items: center; gap: 8px;
+      min-height: 32px; padding: 2px 4px 2px 12px;
+      border: 1px solid var(--line-strong); border-radius: 999px;
+      background: var(--surface-soft); font-size: .74rem;
+    }
+    .chip-x {
+      display: grid; place-items: center; width: 28px; height: 28px; padding: 0;
+      border: 0; border-radius: 50%; background: transparent; color: var(--muted);
+      font-size: 1rem; line-height: 1; cursor: pointer;
+    }
+    .chip-x:hover, .chip-x:focus-visible { background: var(--surface); color: var(--text); outline: none; }
+    .chip-x:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+    .action-menu { width: 198px; }
+    .action-sub > button { display: flex; justify-content: space-between; align-items: center; }
+    .action-submenu { padding: 2px 0 2px 10px; }
+    .action-submenu[hidden] { display: none; }
+    .action-submenu button[aria-checked="true"] { color: var(--accent); }
+
+    .queue-grip {
+      display: grid; place-items: center; width: 40px; height: 40px; padding: 0;
+      border: 1px solid var(--line); border-radius: 8px;
+      background: transparent; color: var(--faint); font-size: 1.05rem;
+      cursor: grab; touch-action: none;
+    }
+    .queue-grip:hover, .queue-grip:focus-visible { color: var(--text); border-color: var(--line-strong); outline: none; }
+    .queue-grip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .queue-grip:active { cursor: grabbing; }
+    .queue-item.is-dragging { opacity: .45; }
+    .queue-item.drop-before { box-shadow: 0 -3px 0 0 var(--accent); }
+    .queue-item.drop-after { box-shadow: 0 3px 0 0 var(--accent); }
+
+    .workspace-menu {
+      position: absolute; z-index: 110; right: 0; top: calc(100% + 10px);
+      width: min(400px, 82vw); padding: 10px;
+      border: 1px solid var(--line-strong); border-radius: 14px;
+      background: var(--surface-solid); box-shadow: var(--shadow);
+    }
+    .workspace-menu[hidden] { display: none; }
+    .ws-heading {
+      margin: 2px 4px 8px; color: var(--faint);
+      font-family: "IBM Plex Mono", monospace; font-size: .68rem; letter-spacing: .08em; text-transform: uppercase;
+    }
+    .ws-item {
+      display: flex; gap: 12px; align-items: flex-start; width: 100%;
+      min-height: 52px; padding: 10px; border: 0; border-radius: 9px;
+      background: transparent; color: var(--text); text-align: left; cursor: pointer;
+    }
+    .ws-item:hover, .ws-item:focus-visible { background: var(--surface-soft); outline: none; }
+    .ws-item:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+    .ws-ico {
+      flex: 0 0 auto; display: grid; place-items: center; width: 32px; height: 32px;
+      border: 1px solid var(--line); border-radius: 8px; color: var(--accent); font-size: 1rem;
+    }
+    .ws-text { display: grid; gap: 2px; }
+    .ws-text strong { font-size: .84rem; }
+    .ws-text span { color: var(--faint); font-size: .72rem; line-height: 1.45; }
+
+    .toast {
+      position: fixed; z-index: 400; left: 50%; bottom: 84px; transform: translateX(-50%);
+      max-width: min(420px, calc(100vw - 32px));
+      padding: 11px 18px; border: 1px solid var(--line-strong); border-radius: 999px;
+      background: var(--surface-solid); color: var(--text); box-shadow: var(--shadow-soft);
+      font-size: .8rem; opacity: 0; transition: opacity .2s ease; pointer-events: none;
+    }
+    .toast[hidden] { display: none; }
+    .toast.is-visible { opacity: 1; }
+
+    @media (max-width: 720px) {
+      .workspace-menu {
+        position: fixed; left: 0; right: 0; bottom: 0; top: auto; width: 100%;
+        border-radius: 18px 18px 0 0; border-bottom: 0; z-index: 300;
+        padding: 12px 14px max(18px, env(safe-area-inset-bottom));
+      }
+    }
+    @media (max-width: 560px) {
+      .project-row { grid-template-columns: 1fr; }
+      .project-combo { max-width: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page" id="top">
+    <header class="intro">
+      <div>
+        <picture class="brand-mark">
+          <source srcset="../brand/wordmark-charcoal.svg" media="(prefers-color-scheme: light)" />
+          <img src="../brand/wordmark-light.svg" alt="LinkLabz" height="34" />
+        </picture>
+        <p class="eyebrow">Layout study · 19 live reviews</p>
+        <h1>LinkLabz — Card Layout Concepts</h1>
+        <p class="lede">A separate test concept using the live review cards—not a replacement for the master board. Try the same set as a tactile stack or a spatial carousel.</p>
+      </div>
+      <nav class="section-nav" aria-label="Concept sections">
+        <button class="nav-link nav-menu-trigger" id="nav-menu-trigger" type="button" aria-expanded="false" aria-controls="nav-menu"><span>Explore experiments</span><span aria-hidden="true">＋</span></button>
+        <div class="nav-menu" id="nav-menu" hidden>
+          <a href="#overview"><strong>Start here</strong><span>How the board thinks</span></a>
+          <a href="#card-swap"><strong>Card Swap</strong><span>Focused triage</span></a>
+          <a href="#cover-flow"><strong>Cover Flow</strong><span>Spatial browsing</span></a>
+          <a href="#filter-lab"><strong>Filter Lab</strong><span>Faceted discovery</span></a>
+          <a href="#digest"><strong>Review Digest</strong><span>Accordion scan</span></a>
+          <a href="#priority-queue"><strong>Priority Queue</strong><span>Reorder shortlist</span></a>
+          <a href="#finish-lab"><strong>Finish Lab</strong><span>Light + depth</span></a>
+        </div>
+        <button class="nav-link" id="workspace-trigger" type="button" aria-expanded="false" aria-controls="workspace-menu"><span>Workspace</span><span aria-hidden="true">＋</span></button>
+        <div class="workspace-menu" id="workspace-menu" hidden role="menu" aria-label="Workspace">
+          <p class="ws-heading">Workspace</p>
+          <button class="ws-item" type="button" role="menuitem" data-ws="export"><span class="ws-ico" aria-hidden="true">↓</span><span class="ws-text"><strong>Download JSON</strong><span>Export reviews, queue order, promoted and favorites as a file.</span></span></button>
+          <button class="ws-item" type="button" role="menuitem" data-ws="import"><span class="ws-ico" aria-hidden="true">↑</span><span class="ws-text"><strong>Load JSON</strong><span>Replace the board from a workspace file and re-render.</span></span></button>
+          <button class="ws-item" type="button" role="menuitem" data-ws="reset"><span class="ws-ico" aria-hidden="true">↺</span><span class="ws-text"><strong>Reset to seed</strong><span>Restore the original 19 reviews and clear promoted and favorites.</span></span></button>
+          <button class="ws-item" type="button" role="menuitem" data-ws="clear"><span class="ws-ico" aria-hidden="true">⌀</span><span class="ws-text"><strong>Clear filters</strong><span>Drop verdict, category, project, marks and search filters.</span></span></button>
+        </div>
+        <input type="file" id="workspace-file" accept="application/json,.json" hidden />
+      </nav>
+    </header>
+
+    <section class="overview" id="overview" aria-labelledby="overview-title">
+      <div>
+        <span class="section-index">WHAT WE'RE BUILDING</span>
+        <h2 id="overview-title">A review board that helps links earn a next step.</h2>
+        <p class="overview-copy">LinkLabz turns a pile of saved links into a working decision system. Each item is reviewed, scored for fit, tied to a real project when relevant, and given a clear posture: try it, park it, or skip it. This concept page tests how that same review data feels when it is browsed spatially instead of read as one long feed.</p>
+      </div>
+      <aside class="reference-key" aria-labelledby="key-title">
+        <h3 id="key-title">Reference key</h3>
+        <ul class="key-list">
+          <li><span class="key-term">Try</span><span>Worth a practical test.</span></li>
+          <li><span class="key-term">Parked</span><span>Promising, but blocked by timing or a dependency.</span></li>
+          <li><span class="key-term">Skipped</span><span>Reviewed and deliberately passed.</span></li>
+          <li><span class="key-term">★ score</span><span>Fit and usefulness—not popularity.</span></li>
+        </ul>
+        <button class="text-button help-trigger" type="button" data-help="system">How the review system works →</button>
+      </aside>
+    </section>
+
+    <section class="concept" id="card-swap" aria-labelledby="swap-title">
+      <div class="section-heading">
+        <div><span class="section-index">01 / CARD SWAP</span><h2 id="swap-title">A deck, not a feed.</h2></div>
+        <p class="section-copy">The current review stays in focus while the next few peek from behind. Tap the top card or use the controls to move through the deck.</p>
+      </div>
+      <div class="section-use"><strong>Best use</strong><span>Focused triage, one decision at a time.</span><button class="learn-more help-trigger" type="button" data-help="swap">Why this layout works →</button></div>
+      <div class="stage-layout">
+        <div class="swap-stage" id="swap-stage" aria-live="polite" aria-label="Review card stack"></div>
+        <div class="controls" aria-label="Card Swap controls">
+          <p class="counter" id="swap-counter">1 / 19</p>
+          <div class="control-row">
+            <button class="control-btn" id="swap-prev" type="button" aria-label="Previous review">← Prev</button>
+            <button class="control-btn" id="swap-next" type="button" aria-label="Next review">Next →</button>
+          </div>
+          <button class="control-btn primary" id="swap-action" type="button">Swap card</button>
+          <p class="hint">Click the top card to send it behind the stack.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="concept" id="cover-flow" aria-labelledby="flow-title">
+      <div class="section-heading">
+        <div><span class="section-index">02 / COVER FLOW + INERTIA</span><h2 id="flow-title">Browse by momentum.</h2></div>
+        <p class="section-copy">The active review faces forward; nearby cards stay visible as context. Drag and release to travel farther with a faster gesture, select a side card, or use the arrows.</p>
+      </div>
+      <div class="section-use"><strong>Inspired by</strong><span>Cover Flow · Inertia Gallery</span><button class="learn-more help-trigger" type="button" data-help="flow">Why this layout works →</button></div>
+      <div class="flow-shell" id="flow-shell" tabindex="0" aria-label="Cover Flow review carousel. Use left and right arrow keys.">
+        <div class="flow-stage" id="flow-stage" aria-live="polite"></div>
+        <div class="flow-controls">
+          <button class="arrow-btn" id="flow-prev" type="button" aria-label="Previous review">←</button>
+          <p class="counter flow-counter" id="flow-counter">1 / 19</p>
+          <button class="arrow-btn" id="flow-next" type="button" aria-label="Next review">→</button>
+        </div>
+        <p class="keyboard-hint">← → keyboard navigation</p>
+      </div>
+    </section>
+
+    <section class="concept" id="filter-lab" aria-labelledby="filter-title">
+      <div class="section-heading">
+        <div><span class="section-index">03 / FILTER LAB</span><h2 id="filter-title">Find the signal fast.</h2></div>
+        <p class="section-copy">A compact discovery layer combines verdict tabs, category facets, search, and per-card actions without turning the board into a dashboard.</p>
+      </div>
+      <div class="section-use"><strong>Inspired by</strong><span>Filter Bar · Multi-select Combobox · Tab Bar · Dropdown Menu</span></div>
+      <div class="command-shell">
+        <div class="filter-topline">
+          <div class="tab-bar" role="tablist" aria-label="Filter by verdict">
+            <button class="tab-btn" type="button" role="tab" aria-selected="true" data-verdict="all">All</button>
+            <button class="tab-btn" type="button" role="tab" aria-selected="false" data-verdict="try">Try</button>
+            <button class="tab-btn" type="button" role="tab" aria-selected="false" data-verdict="parked">Parked</button>
+            <button class="tab-btn" type="button" role="tab" aria-selected="false" data-verdict="skipped">Skipped</button>
+          </div>
+          <div class="combo-wrap">
+            <label class="sr-only" for="review-search">Search reviews</label>
+            <input class="combo-input" id="review-search" type="search" placeholder="Search reviews or projects…" autocomplete="off" aria-autocomplete="list" aria-controls="search-suggestions" />
+            <span class="combo-mark" aria-hidden="true">⌕</span>
+            <div class="combo-list" id="search-suggestions" role="listbox" hidden></div>
+          </div>
+        </div>
+        <div class="project-row">
+          <div class="project-combo" id="project-combo">
+            <label class="sr-only" for="project-input">Filter by project</label>
+            <input class="combo-input" id="project-input" type="text" placeholder="Filter by project…" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="project-list" aria-autocomplete="list" />
+            <span class="combo-mark" aria-hidden="true">▾</span>
+            <ul class="combo-list proj-list" id="project-list" role="listbox" aria-multiselectable="true" aria-label="Projects" hidden></ul>
+          </div>
+          <label class="pin-toggle"><input type="checkbox" id="pin-top" /> <span>Pin projects to top</span></label>
+        </div>
+        <div class="chip-row" id="project-chips" aria-label="Selected projects" hidden></div>
+        <div class="stat-row" id="stat-row" role="group" aria-label="Review statistics">
+          <button class="stat-pill" type="button" data-stat-verdict="all" aria-pressed="true">Reviewed <b id="stat-reviewed">19</b></button>
+          <button class="stat-pill" type="button" data-stat-verdict="try" aria-pressed="false">Try <b id="stat-try">8</b></button>
+          <button class="stat-pill" type="button" data-stat-verdict="parked" aria-pressed="false">Parked <b id="stat-parked">9</b></button>
+          <button class="stat-pill" type="button" data-stat-verdict="skipped" aria-pressed="false">Skipped <b id="stat-skipped">2</b></button>
+          <button class="stat-pill" type="button" data-stat-mark="promoted" aria-pressed="false">Promoted <b id="stat-promoted">0</b></button>
+          <button class="stat-pill" type="button" data-stat-mark="favorites" aria-pressed="false">Favorites <b id="stat-favorites">0</b></button>
+        </div>
+        <div class="facet-row" id="facet-row" aria-label="Category filters"></div>
+        <div class="result-line"><span id="result-count">19 reviews</span><button class="text-button" id="clear-filters" type="button">Clear filters</button></div>
+        <div class="result-grid" id="result-grid"></div>
+      </div>
+    </section>
+
+    <section class="concept" id="digest" aria-labelledby="digest-title">
+      <div class="section-heading">
+        <div><span class="section-index">04 / REVIEW DIGEST</span><h2 id="digest-title">Compress the library, not the thinking.</h2></div>
+        <p class="section-copy">Categories become an expandable index. Open only the lane you care about; the top three reviews stay readable inside each group.</p>
+      </div>
+      <div class="section-use"><strong>Inspired by</strong><span>Accordion · Image Accordion, translated for text-first review data</span></div>
+      <div class="accordion-list" id="accordion-list"></div>
+    </section>
+
+    <section class="concept" id="priority-queue" aria-labelledby="queue-title">
+      <div class="section-heading">
+        <div><span class="section-index">05 / PRIORITY QUEUE</span><h2 id="queue-title">Put the next tests in order.</h2></div>
+        <p class="section-copy">A deliberate shortlist is more useful than another infinite feed. Move the strongest “Try” candidates up or down for this review pass.</p>
+      </div>
+      <div class="section-use"><strong>Inspired by</strong><span>Reorder List · tactile stack motion</span></div>
+      <div class="queue-shell">
+        <ol class="queue-list" id="queue-list"></ol>
+        <aside class="queue-note">
+          <h3>Ordering rule</h3>
+          <p>Rank by the next experiment worth running—not by star score alone. Drag the grip to reorder — order is saved for this session.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="concept" id="finish-lab" aria-labelledby="finish-title">
+      <div class="section-heading">
+        <div><span class="section-index">06 / FINISH LAB</span><h2 id="finish-title">Depth with a job to do.</h2></div>
+        <p class="section-copy">Two expressive treatments are reserved for moments that deserve emphasis: a top recommendation and a compact active-state summary.</p>
+      </div>
+      <div class="section-use"><strong>Inspired by</strong><span>Holographic Card · Liquid Glass Card</span></div>
+      <div class="finish-grid">
+        <article class="finish-card holo-card" id="holo-card">
+          <span class="foil-label">Highest fit · 4.9 ★</span>
+          <h3>OpenDesign</h3>
+          <p>Use the reactive foil treatment only for a featured recommendation—not every review in the library.</p>
+        </article>
+        <div class="finish-card liquid-scene">
+          <article class="liquid-card">
+            <span class="foil-label">Active view</span>
+            <h3 id="liquid-title">All 19 reviews</h3>
+            <p id="liquid-copy">A glass summary can float over a rich surface while the underlying content remains legible.</p>
+          </article>
+        </div>
+      </div>
+      <p class="finish-caption">Pointer movement tilts the featured card. Reduced-motion settings disable the effect.</p>
+    </section>
+
+    <div class="back-top"><a href="#top">Back to top ↑</a></div>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <div class="gooey-tools" aria-label="Quick navigation">
+    <div class="gooey-menu" id="gooey-menu" hidden>
+      <button class="gooey-action" type="button" data-jump="filter-lab">Filter reviews</button>
+      <button class="gooey-action" type="button" data-jump="priority-queue">Open shortlist</button>
+      <button class="gooey-action" type="button" data-jump="top">Back to top</button>
+    </div>
+    <button class="gooey-trigger" id="gooey-trigger" type="button" aria-expanded="false" aria-controls="gooey-menu" aria-label="Open quick navigation">＋</button>
+  </div>
+
+  <dialog class="help-dialog" id="help-dialog" aria-labelledby="dialog-title">
+    <div class="dialog-head">
+      <div><p class="dialog-kicker" id="dialog-kicker">Reference</p><h2 id="dialog-title">How LinkLabz works</h2></div>
+      <button class="dialog-close" id="dialog-close" type="button" aria-label="Close help">×</button>
+    </div>
+    <div class="dialog-body" id="dialog-body"></div>
+  </dialog>
+
+  <script>
+    const reviews = [
+      {"t":"ComfyUI-Ref2VA-VSA","u":"https://github.com/Kablex/ComfyUI-Ref2VA-VSA","v":"try","r":4.8,"c":"Video AI","p":"reWavz / VideoLab","w":"Ultra-fast MiniMax H3 reference-to-video: about 72 seconds claimed on a 4090 versus the current 7:30 H3 lane. The 16GB VRAM fit is promising, not proven."},
+      {"t":"OpenDesign","u":"https://github.com/nexu-io/open-design","v":"try","r":4.9,"c":"Design systems","p":"Website-Templates","w":"A local-first design frontend that connects to Cursor and LM Studio. It is the closest outside project to the lane-2 website-build workflow."},
+      {"t":"Osmantic ODS","u":"https://github.com/osmantic/ods","v":"try","r":3.7,"c":"Design systems","p":"Website-Templates","w":"Open-source design system toolkit worth evaluating against the lane-2 component needs."},
+      {"t":"OpenHiggsfield","u":"https://github.com/openhiggsfield/openhiggsfield","v":"parked","r":3.4,"c":"Video AI","p":"VideoLab","w":"Community take on the Higgsfield video API; parked until the official API pricing and terms are clear."},
+      {"t":"Higgsfield official API","u":"https://higgsfield.ai/api","v":"parked","r":3.6,"c":"Video AI","p":"VideoLab","w":"Official Higgsfield API for programmatic video generation; parked pending credit costs and commercial terms."},
+      {"t":"MetaGPT","u":"https://github.com/geekan/MetaGPT","v":"skipped","r":2.4,"c":"AI agents","p":"","w":"Multi-agent framework; skipped posture — overlaps existing agent plans without a clear wedge."},
+      {"t":"higgsfield-ai/higgsfield","u":"https://github.com/higgsfield-ai/higgsfield","v":"skipped","r":1.2,"c":"Video AI","p":"","w":"Unofficial mirror with thin documentation; skipped in favor of the official API entry."},
+      {"t":"Ship an iOS app with Codex","u":"https://codex.openai.com","v":"try","r":3.8,"c":"AI coding","p":"reWavz","w":"Codex-driven iOS app workflow worth trying for the reWavz companion app experiments."},
+      {"t":"StemKit","u":"https://github.com/danielravina/stemkit","v":"try","r":4.2,"c":"Audio / DAW","p":"reWavz","w":"Local-first Electron stem splitter (YouTube to stems, mini-DAW player, WAV export). Working reference for the planned reWavz stem splitter satellite."},
+      {"t":"Noizefield Audio Plugin Coder","u":"https://github.com/noizefield/audio-plugin-coder","v":"try","r":4.5,"c":"Audio / DAW","p":"reWavz","w":"AI-agent VST3 framework that works with Cursor; matches the JUCE+CMake stack decision."},
+      {"t":"Ultimate Vocal Remover GUI","u":"https://github.com/Anjok07/ultimatevocalremovergui","v":"parked","r":4.3,"c":"Audio / DAW","p":"reWavz","w":"Mature vocal-removal GUI; parked as a reference while the roformer-first engine decision settles."},
+      {"t":"RoboSync — modern robocopy GUI","u":"https://github.com/robosync/robosync","v":"parked","r":4.0,"c":"Utilities","p":"","w":"Modern GUI over robocopy for Windows file sync; parked as a utility candidate."},
+      {"t":"FlutterFlow","u":"https://flutterflow.io","v":"parked","r":3.2,"c":"App builders","p":"","w":"Low-code Flutter app builder under research for a possible companion-app path."},
+      {"t":"Aning — code-wordpress (Codex + Elementor workflow)","u":"https://github.com/ixEmma/code-wordpress","v":"try","r":4.6,"c":"WordPress","p":"Website-Templates","w":"Full Codex + Elementor workflow repo; the Elementor lane of the AI website-build system."},
+      {"t":"Grit & Chaos — Divi 5 website built with Claude (skill)","u":"https://gritandchaos.com/i-finally-built-a-divi-5-website-with-claude-and-yes-i-cried-a-little/","v":"try","r":4.7,"c":"WordPress","p":"Website-Templates","w":"Divi 5 + Claude workflow (export-first portability JSON, self-grade loop); the first real lane-1 skill."},
+      {"t":"3D-engine MCP control — Blender / Unreal / Unity","u":"https://github.com/ahujasid/mcp-for-blender","v":"parked","r":3.3,"c":"3D","p":"","w":"MCP servers for driving Blender/Unreal/Unity from AI agents; parked until the 3D playground activates."},
+      {"t":"MiniMax H3 video model","u":"https://www.minimax.io","v":"parked","r":4.4,"c":"Video AI","p":"VideoLab","w":"H3 community video model on HOLD until grant email terms are reviewed; fun testing only."},
+      {"t":"Pamplejuce — JUCE/VST3 starter template","u":"https://github.com/sudara/pamplejuce","v":"parked","r":3.8,"c":"Audio / DAW","p":"reWavz","w":"Windows-friendly JUCE/VST3 starter with CI and signing bundled; template candidate."},
+      {"t":"Odin 2 + Dexed — open-source synth references","u":"https://github.com/TheWaveWarden/odin2","v":"parked","r":3.5,"c":"Audio / DAW","p":"reWavz","w":"Open-source synth references for DSP study in the reWavz instrument lane."}
+    ];
+
+    const helpCopy = {
+      system: {
+        kicker: "Reference system",
+        title: "From saved link to useful decision",
+        body: `<p>LinkLabz is being built as a decision layer between <strong>finding something interesting</strong> and <strong>doing something useful with it</strong>. A link is not finished when it is bookmarked; it is finished when it has been understood, judged, and routed.</p><p>Every review carries its source category, a fit score, a project when relevant, and a verdict. <strong>Try</strong> means the link has earned a real test. <strong>Parked</strong> preserves value without pretending the timing is right. <strong>Skipped</strong> records a conscious no, so the same idea does not have to be reconsidered from scratch later.</p><p>This page uses the same 19 reviews in two experimental layouts. The goal is to learn which interaction makes a large review library easier to move through without losing the reasoning behind each decision.</p>`
+      },
+      swap: {
+        kicker: "01 · Card Swap",
+        title: "Designed for a focused review pass",
+        body: `<p>Card Swap deliberately hides most of the queue. One item owns the stage, with only enough of the next cards visible to show that more work is waiting. That constraint reduces scanning and makes the current question simple: <strong>is this worth opening, testing, parking, or passing?</strong></p><p>Its strongest use is a weekly triage session, an inbox-zero pass, or any review where decisions matter more than comparison. Swapping the card creates a physical sense of progress without turning the board into a game.</p><p>The tradeoff is orientation: because most items stay out of view, this layout is weaker when you need to compare several related tools at once.</p>`
+      },
+      flow: {
+        kicker: "02 · Cover Flow",
+        title: "Designed for context and rediscovery",
+        body: `<p>Cover Flow keeps the active review readable while neighboring cards remain visible. That peripheral context helps you notice clusters—several video tools, a run of WordPress workflows, or multiple candidates for the same project—without shrinking every review into a dense grid.</p><p>Its strongest use is exploratory browsing: revisiting parked ideas, comparing adjacent candidates, or following a category thread until a clearer favorite appears. Selecting a side card makes the movement direct rather than forcing a fixed sequence.</p><p>The tradeoff is speed: it is more expressive than a list, but the perspective layout can feel slower when the only goal is clearing a queue quickly.</p>`
+      }
+    };
+
+    const helpDialog = document.getElementById("help-dialog");
+    const dialogKicker = document.getElementById("dialog-kicker");
+    const dialogTitle = document.getElementById("dialog-title");
+    const dialogBody = document.getElementById("dialog-body");
+    document.querySelectorAll(".help-trigger").forEach((button) => {
+      button.addEventListener("click", () => {
+        const copy = helpCopy[button.dataset.help];
+        if (!copy) return;
+        dialogKicker.textContent = copy.kicker;
+        dialogTitle.textContent = copy.title;
+        dialogBody.innerHTML = copy.body;
+        helpDialog.showModal();
+      });
+    });
+    document.getElementById("dialog-close").addEventListener("click", () => helpDialog.close());
+    helpDialog.addEventListener("click", (event) => {
+      if (event.target === helpDialog) helpDialog.close();
+    });
+
+    const mod = (n, m) => ((n % m) + m) % m;
+    const swapStage = document.getElementById("swap-stage");
+    const flowStage = document.getElementById("flow-stage");
+    let swapIndex = 0;
+    let flowIndex = 0;
+    let swapLocked = false;
+
+    function cardMarkup(item, index, context) {
+      const project = item.p ? `<span class="project">${item.p}</span>` : "";
+      const openTab = `<a class="open-link" href="${item.u}" target="_blank" rel="noopener noreferrer" aria-label="Open ${item.t} in a new tab">Open link</a>`;
+      return `<article class="review-card ${context}-card" data-index="${index}">
+        <div class="card-topline"><span class="category">${item.c}</span><span class="verdict ${item.v}">${item.v}</span></div>
+        <h3>${item.t}</h3>
+        <div class="card-meta"><span class="rating">${item.r.toFixed(1)} ★</span>${project}</div>
+        <p class="why">${item.w}</p>
+        ${openTab}
+      </article>`;
+    }
+
+    let swapCards = [];
+    let flowCards = [];
+    function buildDecks() {
+      swapStage.innerHTML = reviews.map((item, index) => cardMarkup(item, index, "swap")).join("");
+      flowStage.innerHTML = reviews.map((item, index) => cardMarkup(item, index, "flow")).join("");
+      swapCards = Array.from(swapStage.children);
+      flowCards = Array.from(flowStage.children);
+      swapIndex = Math.min(swapIndex, Math.max(0, reviews.length - 1));
+      flowIndex = Math.min(flowIndex, Math.max(0, reviews.length - 1));
+      renderSwap();
+      renderFlow();
+    }
+    buildDecks();
+
+    function renderSwap() {
+      swapCards.forEach((card, i) => {
+        const depth = mod(i - swapIndex, reviews.length);
+        const visible = depth < 4;
+        card.classList.toggle("is-moving", false);
+        card.style.zIndex = visible ? String(30 - depth) : "0";
+        card.style.opacity = visible ? String(1 - depth * .19) : "0";
+        card.style.filter = visible ? `brightness(${1 - depth * .07})` : "brightness(.75)";
+        card.style.transform = `translate(-50%, ${depth * 22}px) scale(${1 - depth * .038})`;
+        card.setAttribute("aria-hidden", depth === 0 ? "false" : "true");
+        card.tabIndex = depth === 0 ? 0 : -1;
+      });
+      document.getElementById("swap-counter").textContent = `${swapIndex + 1} / ${reviews.length}`;
+    }
+
+    function moveSwap(direction) {
+      if (swapLocked) return;
+      swapLocked = true;
+      swapIndex = mod(swapIndex + direction, reviews.length);
+      renderSwap();
+      window.setTimeout(() => { swapLocked = false; }, 420);
+    }
+
+    swapStage.addEventListener("click", (event) => {
+      if (event.target.closest(".open-link")) return;
+      const card = event.target.closest(".swap-card");
+      if (card && Number(card.dataset.index) === swapIndex) moveSwap(1);
+    });
+    swapStage.addEventListener("keydown", (event) => {
+      if ((event.key === "Enter" || event.key === " ") && event.target.classList.contains("swap-card")) {
+        event.preventDefault(); moveSwap(1);
+      }
+    });
+    document.getElementById("swap-prev").addEventListener("click", () => moveSwap(-1));
+    document.getElementById("swap-next").addEventListener("click", () => moveSwap(1));
+    document.getElementById("swap-action").addEventListener("click", () => moveSwap(1));
+
+    function signedDistance(index, center) {
+      let distance = index - center;
+      if (distance > reviews.length / 2) distance -= reviews.length;
+      if (distance < -reviews.length / 2) distance += reviews.length;
+      return distance;
+    }
+
+    function renderFlow() {
+      const compact = window.matchMedia("(max-width: 560px)").matches;
+      const step = compact ? 130 : 245;
+      flowCards.forEach((card, i) => {
+        const distance = signedDistance(i, flowIndex);
+        const abs = Math.abs(distance);
+        const visible = abs <= 3;
+        const x = distance * step;
+        const rotate = distance === 0 ? 0 : (distance < 0 ? 48 : -48);
+        const scale = distance === 0 ? 1 : Math.max(.72, 1 - abs * .09);
+        const z = distance === 0 ? 120 : -abs * 90;
+        card.style.zIndex = String(40 - abs);
+        card.style.opacity = visible ? String(distance === 0 ? 1 : Math.max(.2, .72 - abs * .17)) : "0";
+        card.style.filter = distance === 0 ? "brightness(1)" : `brightness(${Math.max(.48, .78 - abs * .08)})`;
+        card.style.transform = `translateX(calc(-50% + ${x}px)) translateZ(${z}px) rotateY(${rotate}deg) scale(${scale})`;
+        card.classList.toggle("is-center", distance === 0);
+        card.setAttribute("aria-hidden", distance === 0 ? "false" : "true");
+        card.tabIndex = distance === 0 ? 0 : -1;
+        card.style.pointerEvents = visible ? "auto" : "none";
+      });
+      document.getElementById("flow-counter").textContent = `${flowIndex + 1} / ${reviews.length}`;
+    }
+
+    function moveFlow(direction) {
+      flowIndex = mod(flowIndex + direction, reviews.length);
+      renderFlow();
+    }
+    flowStage.addEventListener("click", (event) => {
+      if (flowStage.dataset.dragged === "true") { flowStage.dataset.dragged = "false"; return; }
+      if (event.target.closest(".open-link")) return;
+      const card = event.target.closest(".flow-card");
+      if (!card) return;
+      const index = Number(card.dataset.index);
+      const distance = signedDistance(index, flowIndex);
+      if (distance) { flowIndex = index; renderFlow(); }
+    });
+    document.getElementById("flow-prev").addEventListener("click", () => moveFlow(-1));
+    document.getElementById("flow-next").addEventListener("click", () => moveFlow(1));
+    document.getElementById("flow-shell").addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft") { event.preventDefault(); moveFlow(-1); }
+      if (event.key === "ArrowRight") { event.preventDefault(); moveFlow(1); }
+    });
+
+    // Keep section jumps inside the artifact's own scrolling document. Muse
+    // Preview hosts the page in a sandboxed webview, where fragment navigation
+    // and smooth scroll requests can be swallowed intermittently.
+    function jumpToSection(targetId) {
+      const target = document.getElementById(targetId);
+      if (!target) return false;
+      const scrollRoot = document.scrollingElement || document.documentElement;
+      const targetTop = Math.max(0, Math.round(target.getBoundingClientRect().top + scrollRoot.scrollTop - 8));
+
+      // Let the browser's focus algorithm initiate the jump first. That path
+      // still works in Preview builds where script-driven scrolling is ignored.
+      if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
+      target.focus({ preventScroll: false });
+
+      // Then set every standards/legacy scroll surface so the same helper also
+      // holds in GitHub Pages and older mobile webviews.
+      scrollRoot.scrollTop = targetTop;
+      document.documentElement.scrollTop = targetTop;
+      window.scrollTo(0, targetTop);
+
+      // Verify after the current event/layout pass. If the host deferred the
+      // scroll, retry through both native target scrolling and focus.
+      window.requestAnimationFrame(() => {
+        if (Math.abs(target.getBoundingClientRect().top - 8) > 24) {
+          target.scrollIntoView({ behavior: "auto", block: "start" });
+          target.focus({ preventScroll: false });
+        }
+      });
+      return true;
+    }
+
+    const navMenuTrigger = document.getElementById("nav-menu-trigger");
+    const navMenu = document.getElementById("nav-menu");
+    navMenuTrigger.addEventListener("click", () => {
+      const open = navMenu.hidden;
+      navMenu.hidden = !open;
+      navMenuTrigger.setAttribute("aria-expanded", String(open));
+      navMenuTrigger.querySelector("span:last-child").textContent = open ? "−" : "＋";
+      if (open) closeWorkspace();
+    });
+    navMenu.addEventListener("click", () => {
+      navMenu.hidden = true;
+      navMenuTrigger.setAttribute("aria-expanded", "false");
+      navMenuTrigger.querySelector("span:last-child").textContent = "＋";
+    });
+
+    let categories = [];
+    const activeCategories = new Set();
+    let activeVerdict = "all";
+    let searchTerm = "";
+    const facetRow = document.getElementById("facet-row");
+    const resultGrid = document.getElementById("result-grid");
+    const resultCount = document.getElementById("result-count");
+    const reviewSearch = document.getElementById("review-search");
+    const suggestions = document.getElementById("search-suggestions");
+
+    function buildFacets() {
+      categories = [...new Set(reviews.map((item) => item.c))];
+      const counts = new Map();
+      reviews.forEach((item) => counts.set(item.c, (counts.get(item.c) || 0) + 1));
+      facetRow.innerHTML = categories.map((category) => `<button class="facet-btn" type="button" aria-pressed="false" data-category="${category}">${category} · ${counts.get(category) || 0}</button>`).join("")
+        + `<div class="marks-wrap" id="marks-wrap">
+          <button class="facet-btn marks-btn" id="marks-btn" type="button" aria-expanded="false" aria-controls="marks-pop" aria-pressed="false"><span class="marks-label">Marks</span></button>
+          <button class="marks-clear" id="marks-clear" type="button" hidden aria-label="Clear marks filter">×</button>
+          <div class="marks-pop" id="marks-pop" hidden>
+            <label class="mark-check"><input type="checkbox" id="mark-promoted" /><span>Promoted <span class="mark-count" id="mark-promoted-count">0</span></span></label>
+            <label class="mark-check"><input type="checkbox" id="mark-favorites" /><span>Favorites <span class="mark-count" id="mark-favorites-count">0</span></span></label>
+          </div>
+        </div>`;
+      const marksBtn = document.getElementById("marks-btn");
+      marksBtn.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const pop = document.getElementById("marks-pop");
+        const open = pop.hidden;
+        closeProjectList();
+        closeActionMenus();
+        pop.hidden = !open;
+        marksBtn.setAttribute("aria-expanded", String(open));
+      });
+      document.getElementById("mark-promoted").addEventListener("change", (event) => setMarksFilter(event.target.checked, filterFavorites));
+      document.getElementById("mark-favorites").addEventListener("change", (event) => setMarksFilter(filterPromoted, event.target.checked));
+      document.getElementById("marks-clear").addEventListener("click", (event) => {
+        event.stopPropagation();
+        setMarksFilter(false, false);
+      });
+    }
+    buildFacets();
+
+    function filteredReviews() {
+      return reviews.filter((item, index) => {
+        const verdictMatch = activeVerdict === "all" || item.v === activeVerdict;
+        const categoryMatch = activeCategories.size === 0 || activeCategories.has(item.c);
+        const projectMatch = selectedProjects.size === 0 || (item.p !== "" && selectedProjects.has(item.p));
+        const marksMatch = (!filterPromoted || promotedIdx.has(index)) && (!filterFavorites || favoriteIdx.has(index));
+        const haystack = `${item.t} ${item.c} ${item.p} ${item.w}`.toLowerCase();
+        return verdictMatch && categoryMatch && projectMatch && marksMatch && (!searchTerm || haystack.includes(searchTerm));
+      });
+    }
+
+    function closeActionMenus(except) {
+      document.querySelectorAll(".action-menu").forEach((menu) => { if (menu !== except) menu.hidden = true; });
+    }
+
+    function renderResults() {
+      const matches = filteredReviews();
+      updateStatPills();
+      updateMarksUI();
+      resultCount.textContent = `${matches.length} ${matches.length === 1 ? "review" : "reviews"}`;
+      document.getElementById("liquid-title").textContent = activeVerdict === "all" ? `${matches.length} matching reviews` : `${matches.length} marked ${activeVerdict}`;
+      document.getElementById("liquid-copy").textContent = activeCategories.size ? `Filtered to ${[...activeCategories].join(", ")}.` : "No category filter is active.";
+      if (!matches.length) {
+        resultGrid.innerHTML = `<div class="empty-result">No reviews match that combination.</div>`;
+        return;
+      }
+      resultGrid.innerHTML = matches.slice(0, 9).map((item) => {
+        const index = reviews.indexOf(item);
+        const laneName = (lane) => lane.charAt(0).toUpperCase() + lane.slice(1);
+        return `<article class="result-card">
+          <span class="verdict ${item.v}">${item.v}</span>
+          <h3>${item.t}</h3>
+          <p>${item.c}${item.p ? ` · ${item.p}` : ""}</p>
+          <div class="result-actions">
+            <button class="more-btn" type="button" aria-label="Actions for ${item.t}" aria-expanded="false">•••</button>
+            <div class="action-menu" role="menu" aria-label="Actions for ${item.t}" hidden>
+              <button type="button" role="menuitem" data-focus-card="${index}">View in Card Swap</button>
+              <a href="${item.u}" target="_blank" rel="noopener noreferrer" role="menuitem">Open source ↗</a>
+              <button type="button" role="menuitem" data-promote="${index}">${promotedIdx.has(index) ? "Unpromote" : "Promote"}</button>
+              <button type="button" role="menuitem" data-favorite="${index}">${favoriteIdx.has(index) ? "Unfavorite" : "Favorite"}</button>
+              <div class="action-sub">
+                <button type="button" data-submenu aria-haspopup="menu" aria-expanded="false"><span>Set lane</span><span aria-hidden="true">▸</span></button>
+                <div class="action-submenu" role="menu" aria-label="Set lane" hidden>
+                  ${["try", "parked", "skipped"].map((lane) => `<button type="button" role="menuitemradio" aria-checked="${item.v === lane}" data-set-lane="${lane}" data-index="${index}">${item.v === lane ? "✓ " : ""}${laneName(lane)}</button>`).join("")}
+                </div>
+              </div>
+              <button type="button" role="menuitem" data-copy="${index}">Copy link</button>
+            </div>
+          </div>
+        </article>`;
+      }).join("") + (matches.length > 9 ? `<div class="empty-result">Showing the first 9 of ${matches.length}. Refine the filters to narrow the set.</div>` : "");
+      resultGrid.querySelectorAll(".more-btn").forEach((button) => {
+        button.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const menu = button.nextElementSibling;
+          const opening = menu.hidden;
+          closeActionMenus(menu);
+          menu.hidden = !opening;
+          button.setAttribute("aria-expanded", String(opening));
+        });
+      });
+      resultGrid.querySelectorAll("[data-submenu]").forEach((button) => {
+        button.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const sub = button.nextElementSibling;
+          const open = sub.hidden;
+          sub.hidden = !open;
+          button.setAttribute("aria-expanded", String(open));
+          button.querySelector("span:last-child").textContent = open ? "▾" : "▸";
+        });
+      });
+      resultGrid.querySelectorAll("[data-focus-card]").forEach((button) => {
+        button.addEventListener("click", () => {
+          swapIndex = Number(button.dataset.focusCard);
+          renderSwap();
+          jumpToSection("card-swap");
+        });
+      });
+      resultGrid.querySelectorAll("[data-promote]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const index = Number(button.dataset.promote);
+          promotedIdx.has(index) ? promotedIdx.delete(index) : promotedIdx.add(index);
+          renderResults();
+        });
+      });
+      resultGrid.querySelectorAll("[data-favorite]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const index = Number(button.dataset.favorite);
+          favoriteIdx.has(index) ? favoriteIdx.delete(index) : favoriteIdx.add(index);
+          renderResults();
+        });
+      });
+      resultGrid.querySelectorAll("[data-set-lane]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const item = reviews[Number(button.dataset.index)];
+          if (item) {
+            item.v = button.dataset.setLane;
+            buildDecks();
+            renderResults();
+            showToast(`Lane set to ${button.dataset.setLane}`);
+          }
+        });
+      });
+      resultGrid.querySelectorAll("[data-copy]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const item = reviews[Number(button.dataset.copy)];
+          if (item) copyText(item.u);
+        });
+      });
+    }
+
+    function setVerdict(verdict) {
+      activeVerdict = verdict;
+      document.querySelectorAll(".tab-btn").forEach((tab) => tab.setAttribute("aria-selected", String(tab.dataset.verdict === verdict)));
+      renderResults();
+    }
+    document.querySelectorAll(".tab-btn").forEach((button) => {
+      button.addEventListener("click", () => setVerdict(button.dataset.verdict));
+    });
+    facetRow.addEventListener("click", (event) => {
+      const button = event.target.closest(".facet-btn");
+      if (!button) return;
+      const category = button.dataset.category;
+      activeCategories.has(category) ? activeCategories.delete(category) : activeCategories.add(category);
+      button.setAttribute("aria-pressed", String(activeCategories.has(category)));
+      renderResults();
+    });
+
+    function renderSuggestions() {
+      const term = reviewSearch.value.trim().toLowerCase();
+      if (!term) { suggestions.hidden = true; return; }
+      const matches = reviews.filter((item) => `${item.t} ${item.p}`.toLowerCase().includes(term)).slice(0, 6);
+      suggestions.innerHTML = matches.length ? matches.map((item) => `<button class="combo-option" type="button" role="option" data-value="${item.t}"><span>${item.t}</span><span>${item.c}</span></button>`).join("") : `<div class="combo-option"><span>No matching title</span></div>`;
+      suggestions.hidden = false;
+    }
+    reviewSearch.addEventListener("input", () => {
+      searchTerm = reviewSearch.value.trim().toLowerCase();
+      renderSuggestions();
+      renderResults();
+    });
+    reviewSearch.addEventListener("focus", renderSuggestions);
+    suggestions.addEventListener("click", (event) => {
+      const option = event.target.closest("[data-value]");
+      if (!option) return;
+      reviewSearch.value = option.dataset.value;
+      searchTerm = reviewSearch.value.toLowerCase();
+      suggestions.hidden = true;
+      renderResults();
+    });
+    function clearAllFilters() {
+      activeVerdict = "all";
+      searchTerm = "";
+      reviewSearch.value = "";
+      activeCategories.clear();
+      selectedProjects.clear();
+      filterPromoted = false;
+      filterFavorites = false;
+      projectInput.value = "";
+      document.querySelectorAll(".tab-btn").forEach((tab) => tab.setAttribute("aria-selected", String(tab.dataset.verdict === "all")));
+      document.querySelectorAll(".facet-btn").forEach((button) => button.setAttribute("aria-pressed", "false"));
+      suggestions.hidden = true;
+      closeProjectList();
+      closeMarksPop();
+      renderProjectChips();
+      renderProjectList();
+      renderResults();
+    }
+    document.getElementById("clear-filters").addEventListener("click", clearAllFilters);
+
+    function buildAccordion() {
+      const grouped = categories.map((category) => ({ category, items: reviews.filter((item) => item.c === category).sort((a, b) => b.r - a.r) }));
+      const accordionList = document.getElementById("accordion-list");
+      accordionList.innerHTML = grouped.map((group, index) => `<div class="accordion-item">
+        <button class="accordion-trigger" type="button" aria-expanded="${index === 0}" aria-controls="accordion-${index}">
+          <strong>${group.category}</strong><span>${group.items.length} ${group.items.length === 1 ? "review" : "reviews"} · top ${group.items[0].r.toFixed(1)} ★</span><b aria-hidden="true">＋</b>
+        </button>
+        <div class="accordion-panel" id="accordion-${index}" ${index === 0 ? "" : "hidden"}>
+          ${group.items.slice(0, 3).map((item) => `<article class="digest-card"><span class="verdict ${item.v}">${item.v}</span><h4>${item.t}</h4><p>${item.w}</p></article>`).join("")}
+        </div>
+      </div>`).join("");
+    }
+    buildAccordion();
+    document.getElementById("accordion-list").addEventListener("click", (event) => {
+      const trigger = event.target.closest(".accordion-trigger");
+      if (!trigger) return;
+      const open = trigger.getAttribute("aria-expanded") !== "true";
+      trigger.setAttribute("aria-expanded", String(open));
+      document.getElementById(trigger.getAttribute("aria-controls")).hidden = !open;
+    });
+
+    let queueItems = reviews.filter((item) => item.v === "try").sort((a, b) => b.r - a.r);
+    const queueList = document.getElementById("queue-list");
+    function renderQueue() {
+      queueList.innerHTML = queueItems.map((item, index) => `<li class="queue-item" data-index="${index}">
+        <button class="queue-grip" type="button" draggable="true" aria-label="Reorder ${item.t}. Drag, or use arrow keys to move." title="Drag to reorder">⠿</button>
+        <span class="queue-rank">${String(index + 1).padStart(2, "0")}</span>
+        <div><strong>${item.t}</strong><span>${item.c} · ${item.r.toFixed(1)} ★</span></div>
+        <div class="queue-movers">
+          <button type="button" data-move="up" data-index="${index}" aria-label="Move ${item.t} up" ${index === 0 ? "disabled" : ""}>↑</button>
+          <button type="button" data-move="down" data-index="${index}" aria-label="Move ${item.t} down" ${index === queueItems.length - 1 ? "disabled" : ""}>↓</button>
+        </div>
+      </li>`).join("");
+    }
+    queueList.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-move]");
+      if (!button || button.disabled) return;
+      const from = Number(button.dataset.index);
+      const to = button.dataset.move === "up" ? from - 1 : from + 1;
+      [queueItems[from], queueItems[to]] = [queueItems[to], queueItems[from]];
+      renderQueue();
+      queueList.children[to].querySelector(`[data-move="${button.dataset.move}"]`).focus();
+    });
+
+    const holoCard = document.getElementById("holo-card");
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      holoCard.addEventListener("pointermove", (event) => {
+        const rect = holoCard.getBoundingClientRect();
+        const x = ((event.clientX - rect.left) / rect.width) * 100;
+        const y = ((event.clientY - rect.top) / rect.height) * 100;
+        holoCard.style.setProperty("--px", `${x}%`);
+        holoCard.style.setProperty("--py", `${y}%`);
+        holoCard.style.transform = `perspective(900px) rotateX(${(50 - y) * .08}deg) rotateY(${(x - 50) * .08}deg)`;
+      });
+      holoCard.addEventListener("pointerleave", () => { holoCard.style.transform = ""; });
+    }
+
+    const gooeyTrigger = document.getElementById("gooey-trigger");
+    const gooeyMenu = document.getElementById("gooey-menu");
+    gooeyTrigger.addEventListener("click", () => {
+      const open = gooeyMenu.hidden;
+      gooeyMenu.hidden = !open;
+      gooeyTrigger.setAttribute("aria-expanded", String(open));
+      gooeyTrigger.textContent = open ? "×" : "＋";
+    });
+    gooeyMenu.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-jump]");
+      if (!button) return;
+      jumpToSection(button.dataset.jump);
+      gooeyMenu.hidden = true;
+      gooeyTrigger.setAttribute("aria-expanded", "false");
+      gooeyTrigger.textContent = "＋";
+    });
+    document.addEventListener("click", (event) => {
+      if (!event.target.closest(".combo-wrap")) suggestions.hidden = true;
+      if (!event.target.closest("#project-combo")) closeProjectList();
+      if (!event.target.closest("#marks-wrap")) closeMarksPop();
+      if (!event.target.closest(".result-actions")) closeActionMenus();
+      if (!event.target.closest(".section-nav")) {
+        navMenu.hidden = true;
+        navMenuTrigger.setAttribute("aria-expanded", "false");
+        navMenuTrigger.querySelector("span:last-child").textContent = "＋";
+        closeWorkspace();
+      }
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape") return;
+      closeProjectList();
+      closeMarksPop();
+      closeActionMenus();
+      closeWorkspace();
+    });
+
+    /* ——— Harvest: GodUI keepers ———
+       Facet counts + Marks popover, project combobox, stat pills, workspace
+       menu (export/import/reset), queue drag-to-reorder, toast + copy helpers. */
+    const seedReviews = reviews.map((item) => ({ ...item }));
+    const promotedIdx = new Set();
+    const favoriteIdx = new Set();
+    const selectedProjects = new Set();
+    const pinnedProjects = new Set();
+    let filterPromoted = false;
+    let filterFavorites = false;
+
+    function escHtml(value) {
+      return String(value).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    }
+    function highlightMatch(text, query) {
+      const safe = escHtml(text);
+      if (!query) return safe;
+      const idx = text.toLowerCase().indexOf(query);
+      if (idx < 0) return safe;
+      return escHtml(text.slice(0, idx)) + "<mark>" + escHtml(text.slice(idx, idx + query.length)) + "</mark>" + escHtml(text.slice(idx + query.length));
+    }
+
+    let toastTimer = 0;
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.hidden = false;
+      toast.classList.add("is-visible");
+      window.clearTimeout(toastTimer);
+      toastTimer = window.setTimeout(() => {
+        toast.classList.remove("is-visible");
+        toast.hidden = true;
+      }, 2200);
+    }
+    function fallbackCopy(text) {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.cssText = "position:fixed;top:0;left:0;opacity:0;";
+      document.body.appendChild(ta);
+      ta.select();
+      let ok = false;
+      try { ok = document.execCommand("copy"); } catch (_) { ok = false; }
+      ta.remove();
+      return ok;
+    }
+    function copyText(text) {
+      const done = (ok) => showToast(ok ? "Link copied ✓" : "Copy failed — long-press the link instead");
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+        navigator.clipboard.writeText(text).then(() => done(true)).catch(() => done(fallbackCopy(text)));
+      } else {
+        done(fallbackCopy(text));
+      }
+    }
+
+    /* Stat pills — live counts; verdict pills set the tab, marks pills toggle the marks filter. */
+    function updateStatPills() {
+      const counts = { try: 0, parked: 0, skipped: 0 };
+      reviews.forEach((item) => { if (counts[item.v] !== undefined) counts[item.v] += 1; });
+      const setCount = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = String(value); };
+      setCount("stat-reviewed", reviews.length);
+      setCount("stat-try", counts.try);
+      setCount("stat-parked", counts.parked);
+      setCount("stat-skipped", counts.skipped);
+      setCount("stat-promoted", promotedIdx.size);
+      setCount("stat-favorites", favoriteIdx.size);
+      document.querySelectorAll("[data-stat-verdict]").forEach((pill) => pill.setAttribute("aria-pressed", String(activeVerdict === pill.dataset.statVerdict)));
+      document.querySelectorAll("[data-stat-mark]").forEach((pill) => {
+        pill.setAttribute("aria-pressed", String(pill.dataset.statMark === "promoted" ? filterPromoted : filterFavorites));
+      });
+    }
+    document.querySelectorAll("[data-stat-verdict]").forEach((pill) => {
+      pill.addEventListener("click", () => setVerdict(pill.dataset.statVerdict));
+    });
+    document.querySelectorAll("[data-stat-mark]").forEach((pill) => {
+      pill.addEventListener("click", () => {
+        if (pill.dataset.statMark === "promoted") setMarksFilter(!filterPromoted, filterFavorites);
+        else setMarksFilter(filterPromoted, !filterFavorites);
+      });
+    });
+
+    /* Marks popover — two checkboxes driving the marks filter; × clears the filter. */
+    function setMarksFilter(promoted, favorites) {
+      filterPromoted = promoted;
+      filterFavorites = favorites;
+      renderResults();
+    }
+    function updateMarksUI() {
+      const promotedBox = document.getElementById("mark-promoted");
+      if (!promotedBox) return;
+      promotedBox.checked = filterPromoted;
+      document.getElementById("mark-favorites").checked = filterFavorites;
+      document.getElementById("mark-promoted-count").textContent = String(promotedIdx.size);
+      document.getElementById("mark-favorites-count").textContent = String(favoriteIdx.size);
+      const active = [];
+      if (filterPromoted) active.push("Promoted");
+      if (filterFavorites) active.push("Favorites");
+      const btn = document.getElementById("marks-btn");
+      btn.querySelector(".marks-label").textContent = active.length ? `Marks: ${active[0]}${active.length > 1 ? ` +${active.length - 1}` : ""}` : "Marks";
+      btn.setAttribute("aria-pressed", String(active.length > 0));
+      document.getElementById("marks-clear").hidden = active.length === 0;
+    }
+    function closeMarksPop() {
+      const pop = document.getElementById("marks-pop");
+      const btn = document.getElementById("marks-btn");
+      if (pop) pop.hidden = true;
+      if (btn) btn.setAttribute("aria-expanded", "false");
+    }
+
+    /* Project combobox — multi-select project picker with pin-to-top ordering. */
+    const projectInput = document.getElementById("project-input");
+    const projectList = document.getElementById("project-list");
+    const projectChips = document.getElementById("project-chips");
+    const pinTopToggle = document.getElementById("pin-top");
+
+    function projectNames() {
+      const seen = [];
+      reviews.forEach((item) => { if (item.p && !seen.includes(item.p)) seen.push(item.p); });
+      return seen;
+    }
+    function projectCounts() {
+      const map = new Map();
+      reviews.forEach((item) => { if (item.p) map.set(item.p, (map.get(item.p) || 0) + 1); });
+      return map;
+    }
+    function renderProjectList() {
+      const query = projectInput.value.trim().toLowerCase();
+      const counts = projectCounts();
+      let names = projectNames().filter((name) => !query || name.toLowerCase().includes(query));
+      if (pinTopToggle.checked) {
+        names = names.slice().sort((a, b) => Number(pinnedProjects.has(b)) - Number(pinnedProjects.has(a)));
+      }
+      projectList.innerHTML = names.length ? names.map((name) => `
+        <li class="proj-row">
+          <button type="button" class="proj-option" role="option" aria-selected="${selectedProjects.has(name)}" data-project="${escHtml(name)}">
+            <span class="proj-label">${highlightMatch(name, query)}</span>
+            <span class="proj-count">${counts.get(name) || 0}</span>
+          </button>
+          <button type="button" class="proj-pin" aria-pressed="${pinnedProjects.has(name)}" aria-label="${pinnedProjects.has(name) ? "Unpin" : "Pin"} ${escHtml(name)}" data-pin="${escHtml(name)}" title="${pinnedProjects.has(name) ? "Unpin from top" : "Pin to top"}">📍</button>
+        </li>`).join("") : `<li class="proj-empty">No matching projects</li>`;
+    }
+    function renderProjectChips() {
+      const names = [...selectedProjects];
+      projectChips.innerHTML = names.map((name) => `<span class="proj-chip">${escHtml(name)}<button type="button" class="chip-x" data-chip-remove="${escHtml(name)}" aria-label="Remove ${escHtml(name)} from project filter">×</button></span>`).join("");
+      projectChips.hidden = names.length === 0;
+    }
+    function toggleProject(name) {
+      if (selectedProjects.has(name)) selectedProjects.delete(name);
+      else selectedProjects.add(name);
+      renderProjectChips();
+      renderProjectList();
+      renderResults();
+    }
+    function openProjectList() {
+      projectList.hidden = false;
+      projectInput.setAttribute("aria-expanded", "true");
+    }
+    function closeProjectList() {
+      projectList.hidden = true;
+      projectInput.setAttribute("aria-expanded", "false");
+    }
+    projectInput.addEventListener("input", () => { openProjectList(); renderProjectList(); });
+    projectInput.addEventListener("focus", () => { openProjectList(); renderProjectList(); });
+    projectInput.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") { closeProjectList(); projectInput.blur(); }
+      else if (event.key === "ArrowDown" && !projectList.hidden) {
+        event.preventDefault();
+        const first = projectList.querySelector(".proj-option");
+        if (first) first.focus();
+      } else if (event.key === "Backspace" && !projectInput.value && selectedProjects.size) {
+        const names = [...selectedProjects];
+        selectedProjects.delete(names[names.length - 1]);
+        renderProjectChips();
+        renderProjectList();
+        renderResults();
+      }
+    });
+    projectList.addEventListener("click", (event) => {
+      const pin = event.target.closest("[data-pin]");
+      if (pin) {
+        const name = pin.dataset.pin;
+        if (pinnedProjects.has(name)) pinnedProjects.delete(name);
+        else pinnedProjects.add(name);
+        renderProjectList();
+        projectInput.focus();
+        return;
+      }
+      const opt = event.target.closest("[data-project]");
+      if (!opt) return;
+      toggleProject(opt.dataset.project);
+      projectInput.value = "";
+      renderProjectList();
+      projectInput.focus();
+    });
+    projectList.addEventListener("keydown", (event) => {
+      const options = [...projectList.querySelectorAll(".proj-option")];
+      const i = options.indexOf(document.activeElement);
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        (options[i + 1] || options[0] || projectInput).focus();
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        if (i <= 0) projectInput.focus();
+        else options[i - 1].focus();
+      } else if (event.key === "Escape") {
+        closeProjectList();
+        projectInput.focus();
+      }
+    });
+    projectChips.addEventListener("click", (event) => {
+      const x = event.target.closest("[data-chip-remove]");
+      if (!x) return;
+      selectedProjects.delete(x.dataset.chipRemove);
+      renderProjectChips();
+      renderProjectList();
+      renderResults();
+    });
+    pinTopToggle.addEventListener("change", renderProjectList);
+
+    /* Workspace menu — download / load / reset / clear. */
+    const workspaceTrigger = document.getElementById("workspace-trigger");
+    const workspaceMenu = document.getElementById("workspace-menu");
+    const workspaceFile = document.getElementById("workspace-file");
+    function setWorkspaceOpen(open) {
+      workspaceMenu.hidden = !open;
+      workspaceTrigger.setAttribute("aria-expanded", String(open));
+      workspaceTrigger.querySelector("span:last-child").textContent = open ? "−" : "＋";
+      if (open) {
+        const first = workspaceMenu.querySelector(".ws-item");
+        if (first) first.focus();
+      }
+    }
+    function closeWorkspace() {
+      if (!workspaceMenu.hidden) setWorkspaceOpen(false);
+    }
+    workspaceTrigger.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const open = workspaceMenu.hidden;
+      navMenu.hidden = true;
+      navMenuTrigger.setAttribute("aria-expanded", "false");
+      navMenuTrigger.querySelector("span:last-child").textContent = "＋";
+      setWorkspaceOpen(open);
+    });
+    workspaceMenu.addEventListener("click", (event) => {
+      const item = event.target.closest("[data-ws]");
+      if (!item) return;
+      const act = item.dataset.ws;
+      closeWorkspace();
+      if (act === "export") exportWorkspace();
+      else if (act === "import") workspaceFile.click();
+      else if (act === "reset") resetToSeed();
+      else if (act === "clear") clearAllFilters();
+    });
+    workspaceMenu.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") { closeWorkspace(); workspaceTrigger.focus(); }
+    });
+    function exportWorkspace() {
+      const data = {
+        exportedAt: new Date().toISOString(),
+        reviews: reviews,
+        queueOrder: queueItems.map((item) => item.t),
+        promoted: [...promotedIdx].map((i) => reviews[i] && reviews[i].t).filter(Boolean),
+        favorites: [...favoriteIdx].map((i) => reviews[i] && reviews[i].t).filter(Boolean)
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "linklabz-workspace.json";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(link.href), 4000);
+      showToast("Workspace downloaded ✓");
+    }
+    function applyWorkspaceData(data) {
+      if (!data || !Array.isArray(data.reviews) || !data.reviews.length) {
+        showToast("That file has no reviews to load.");
+        return false;
+      }
+      const clean = [];
+      data.reviews.forEach((r) => {
+        if (!r || typeof r.t !== "string" || !r.t) return;
+        clean.push({
+          t: r.t,
+          u: typeof r.u === "string" ? r.u : "",
+          v: ["try", "parked", "skipped"].includes(r.v) ? r.v : "parked",
+          r: typeof r.r === "number" ? r.r : 0,
+          c: typeof r.c === "string" && r.c ? r.c : "Uncategorized",
+          p: typeof r.p === "string" ? r.p : "",
+          w: typeof r.w === "string" ? r.w : ""
+        });
+      });
+      if (!clean.length) {
+        showToast("That file has no reviews to load.");
+        return false;
+      }
+      reviews.length = 0;
+      clean.forEach((r) => reviews.push(r));
+      const order = Array.isArray(data.queueOrder) ? data.queueOrder : null;
+      if (order) {
+        const byTitle = new Map(reviews.map((r) => [r.t, r]));
+        const seen = new Set();
+        queueItems = [];
+        order.forEach((t) => {
+          const item = byTitle.get(t);
+          if (item && !seen.has(t)) { seen.add(t); queueItems.push(item); }
+        });
+      } else {
+        queueItems = reviews.filter((item) => item.v === "try").sort((a, b) => b.r - a.r);
+      }
+      promotedIdx.clear();
+      favoriteIdx.clear();
+      const promotedTitles = new Set(Array.isArray(data.promoted) ? data.promoted : []);
+      const favoriteTitles = new Set(Array.isArray(data.favorites) ? data.favorites : []);
+      reviews.forEach((r, i) => {
+        if (promotedTitles.has(r.t)) promotedIdx.add(i);
+        if (favoriteTitles.has(r.t)) favoriteIdx.add(i);
+      });
+      clearAllFilters();
+      buildFacets();
+      buildAccordion();
+      buildDecks();
+      renderQueue();
+      updateMarksUI();
+      updateStatPills();
+      return true;
+    }
+    function resetToSeed() {
+      applyWorkspaceData({
+        reviews: seedReviews.map((r) => ({ ...r })),
+        queueOrder: null,
+        promoted: [],
+        favorites: []
+      });
+      showToast("Workspace reset to seed.");
+    }
+    workspaceFile.addEventListener("change", () => {
+      const file = workspaceFile.files[0];
+      workspaceFile.value = "";
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          if (applyWorkspaceData(JSON.parse(reader.result))) showToast("Workspace loaded ✓");
+        } catch (_) {
+          showToast("Could not read that file.");
+        }
+      };
+      reader.onerror = () => showToast("Could not read that file.");
+      reader.readAsText(file);
+    });
+
+    /* Priority queue — HTML5 drag-to-reorder on the grip; up/down movers stay as fallback. */
+    let dragSrcIndex = null;
+    queueList.addEventListener("dragstart", (event) => {
+      const grip = event.target.closest(".queue-grip");
+      if (!grip) { event.preventDefault(); return; }
+      const item = grip.closest(".queue-item");
+      dragSrcIndex = Number(item.dataset.index);
+      event.dataTransfer.effectAllowed = "move";
+      try { event.dataTransfer.setData("text/plain", String(dragSrcIndex)); } catch (_) {}
+      item.classList.add("is-dragging");
+    });
+    queueList.addEventListener("dragover", (event) => {
+      if (dragSrcIndex === null) return;
+      const item = event.target.closest(".queue-item");
+      queueList.querySelectorAll(".drop-before, .drop-after").forEach((el) => el.classList.remove("drop-before", "drop-after"));
+      if (!item) return;
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "move";
+      const rect = item.getBoundingClientRect();
+      const after = (event.clientY - rect.top) > rect.height / 2;
+      item.classList.add(after ? "drop-after" : "drop-before");
+    });
+    queueList.addEventListener("dragleave", (event) => {
+      if (!queueList.contains(event.relatedTarget)) {
+        queueList.querySelectorAll(".drop-before, .drop-after").forEach((el) => el.classList.remove("drop-before", "drop-after"));
+      }
+    });
+    queueList.addEventListener("drop", (event) => {
+      if (dragSrcIndex === null) return;
+      const item = event.target.closest(".queue-item");
+      if (!item) { dragSrcIndex = null; return; }
+      event.preventDefault();
+      const from = dragSrcIndex;
+      const targetOrig = Number(item.dataset.index);
+      const rect = item.getBoundingClientRect();
+      const after = (event.clientY - rect.top) > rect.height / 2;
+      const [moved] = queueItems.splice(from, 1);
+      let to = targetOrig + (after ? 1 : 0);
+      if (to > from) to -= 1;
+      queueItems.splice(to, 0, moved);
+      dragSrcIndex = null;
+      renderQueue();
+    });
+    queueList.addEventListener("dragend", () => {
+      dragSrcIndex = null;
+      queueList.querySelectorAll(".is-dragging, .drop-before, .drop-after").forEach((el) => el.classList.remove("is-dragging", "drop-before", "drop-after"));
+    });
+    queueList.addEventListener("keydown", (event) => {
+      const grip = event.target.closest(".queue-grip");
+      if (!grip) return;
+      const index = Number(grip.closest(".queue-item").dataset.index);
+      let to = -1;
+      if (event.key === "ArrowUp") to = index - 1;
+      else if (event.key === "ArrowDown") to = index + 1;
+      else return;
+      event.preventDefault();
+      if (to < 0 || to >= queueItems.length) return;
+      [queueItems[index], queueItems[to]] = [queueItems[to], queueItems[index]];
+      renderQueue();
+      const moved = queueList.children[to];
+      if (moved) moved.querySelector(".queue-grip").focus();
+    });
+
+    renderProjectList();
+    renderProjectChips();
+    updateMarksUI();
+    updateStatPills();
+
+    renderResults();
+    renderQueue();
+
+    function addSwipe(element, onLeft, onRight) {
+      let startX = 0;
+      let startY = 0;
+      element.addEventListener("pointerdown", (event) => { startX = event.clientX; startY = event.clientY; });
+      element.addEventListener("pointerup", (event) => {
+        const dx = event.clientX - startX;
+        const dy = event.clientY - startY;
+        if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.3) dx < 0 ? onLeft() : onRight();
+      });
+    }
+    addSwipe(swapStage, () => moveSwap(1), () => moveSwap(-1));
+
+    function addInertiaGallery(element) {
+      let startX = 0;
+      let startY = 0;
+      let startedAt = 0;
+      let dragging = false;
+      element.addEventListener("pointerdown", (event) => {
+        if (event.target.closest(".open-link")) return;
+        startX = event.clientX;
+        startY = event.clientY;
+        startedAt = performance.now();
+        dragging = true;
+        element.classList.add("is-dragging");
+        if (element.setPointerCapture) element.setPointerCapture(event.pointerId);
+      });
+      element.addEventListener("pointermove", (event) => {
+        if (!dragging) return;
+        const dx = event.clientX - startX;
+        const dy = event.clientY - startY;
+        if (Math.abs(dx) > Math.abs(dy)) element.style.transform = `translateX(${Math.max(-48, Math.min(48, dx * .18))}px)`;
+      });
+      element.addEventListener("pointerup", (event) => {
+        if (!dragging) return;
+        dragging = false;
+        element.classList.remove("is-dragging");
+        element.style.transform = "";
+        const dx = event.clientX - startX;
+        const dy = event.clientY - startY;
+        const elapsed = Math.max(80, performance.now() - startedAt);
+        if (Math.abs(dx) > 38 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+          const velocity = Math.abs(dx) / elapsed;
+          const steps = Math.max(1, Math.min(3, Math.round(Math.abs(dx) / 150 + velocity)));
+          flowStage.dataset.dragged = "true";
+          flowIndex = mod(flowIndex + (dx < 0 ? steps : -steps), reviews.length);
+          renderFlow();
+        }
+      });
+      element.addEventListener("pointercancel", () => {
+        dragging = false;
+        element.classList.remove("is-dragging");
+        element.style.transform = "";
+      });
+    }
+    addInertiaGallery(flowStage);
+
+    // Delegate every current and future in-page link through the same reliable
+    // jump path. Capture phase prevents the Preview host from consuming a
+    // fragment click before this document can handle it.
+    document.addEventListener("click", (event) => {
+      const link = event.target.closest('a[href^="#"]');
+      if (!link) return;
+      const targetId = link.getAttribute("href").slice(1);
+      if (!document.getElementById(targetId)) return;
+      event.preventDefault();
+      navMenu.hidden = true;
+      navMenuTrigger.setAttribute("aria-expanded", "false");
+      navMenuTrigger.querySelector("span:last-child").textContent = "＋";
+      jumpToSection(targetId);
+    }, true);
+
+    let resizeTimer;
+    window.addEventListener("resize", () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(renderFlow, 100);
+    });
+
+    renderSwap();
+    renderFlow();
+  </script>
+</body>
+</html>
