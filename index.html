@@ -698,8 +698,9 @@
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 10px 14px;
+      margin-bottom: 16px;
     }
 
     .card-meta {
@@ -762,7 +763,7 @@
     .verdict-chip.parked { color: var(--parked); background: var(--parked-soft); }
     .verdict-chip.skipped { color: var(--skipped); background: var(--skipped-soft); }
 
-    .card-top-actions { display: flex; align-items: center; gap: 7px; }
+    .card-top-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
     .delete-btn {
       width: 28px;
       height: 28px;
@@ -1649,12 +1650,8 @@
     .utility-head h2 { display: flex; align-items: center; gap: 10px; }
     .utility-head h2::before { content: var(--sec-icon); font-size: .85em; filter: saturate(1.2); }
 
-    #panel-reviews .lane[data-lane="inbox"] { --lane-accent: var(--cyan); }
-    #panel-reviews .lane[data-lane="try"] { --lane-accent: var(--try); }
-    #panel-reviews .lane[data-lane="parked"] { --lane-accent: var(--parked); }
-    #panel-reviews .lane[data-lane="skipped"] { --lane-accent: var(--skipped); }
-    /* ---- REVIEWS: "The Deck" — lane board keeps desktop grid; mobile becomes a snap-scroll deck ---- */
-    #panel-reviews .lane { border-top: 3px solid var(--lane-accent, var(--sec-accent)); border-radius: 14px; overflow: hidden; }
+    /* ---- REVIEWS: "The Deck" — lane board keeps desktop grid; mobile becomes a snap-scroll deck (no accent strokes — clean dark glass) ---- */
+    #panel-reviews .lane { border-radius: 14px; overflow: hidden; }
     #panel-reviews .lane-header { background: rgba(20, 21, 25, .82); }
     #panel-reviews .lane-title { text-transform: uppercase; letter-spacing: .12em; font-size: 12.5px; font-weight: 800; }
     #panel-reviews .lane-count { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--sec-accent); border: 1px solid var(--line-strong); border-radius: 999px; padding: 2px 9px; }
@@ -1662,26 +1659,29 @@
       #panel-reviews .board:not(.grid-view) { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; padding: 4px 2px 14px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
       #panel-reviews .board:not(.grid-view)::-webkit-scrollbar { display: none; }
       #panel-reviews .board:not(.grid-view) .lane { flex: 0 0 86vw; scroll-snap-align: center; }
-      #panel-reviews .board:not(.grid-view) .card-list { max-height: 60vh; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 12px; }
+      #panel-reviews .board:not(.grid-view) .card-list { max-height: 60vh; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; padding: 14px; }
+      #panel-reviews .board:not(.grid-view) .card-list .card { flex-shrink: 0; }
       #panel-reviews .board:not(.grid-view) .empty-state { flex: 0 0 86vw; scroll-snap-align: center; }
+      /* uncluttered card header: date on its own line, actions in a roomy row below */
+      #panel-reviews .card-top { flex-direction: column; align-items: flex-start; }
+      #panel-reviews .card-top-actions { width: 100%; justify-content: flex-start; }
     }
 
     /* ---- BOOKMARKS: "The Shelf" — tight favicon rows ---- */
     #bookmark-list { display: flex; flex-direction: column; gap: 10px; }
     #bookmark-list .utility-card.bookmark { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 13px 16px; border-radius: 12px; border-left: 3px solid var(--sec-accent); }
     #bookmark-list .utility-identity { margin: 0; flex: 1 1 220px; }
-    #bookmark-list .utility-identity .visual-anchor { width: 38px; height: 38px; border-radius: 10px; font-size: 15px; border: 0; color: #fff; background: linear-gradient(135deg, hsl(var(--anchor-hue, 40), 55%, 44%), hsl(var(--anchor-hue, 40), 55%, 26%)); }
+    #bookmark-list .utility-identity .visual-anchor { width: 38px; height: 38px; border-radius: 10px; font-size: 15px; border: 0; color: #fff; background: linear-gradient(135deg, hsl(40, 48%, 38%), hsl(31, 48%, 21%)); }
     #bookmark-list .utility-card.bookmark > p { flex: 1 1 100%; margin: 0; font-size: 13px; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
     #bookmark-list .utility-meta { margin: 0; }
     #bookmark-list .utility-actions { margin-left: auto; padding-top: 0; }
 
     /* ---- SPITBALLS: "The Wall" — sticky notes with tape ---- */
-    #spitball-list .utility-card.idea { margin-top: 10px; border-radius: 3px 16px 3px 16px; background: linear-gradient(165deg, #2b2417 0%, #1d1811 100%); border: 1px solid rgba(224, 123, 57, .35); box-shadow: 0 10px 24px rgba(0,0,0,.35); transition: transform .18s ease; }
+    #spitball-list .utility-card.idea { border-radius: 3px 16px 3px 16px; background: linear-gradient(165deg, #2b2417 0%, #1d1811 100%); border: 1px solid rgba(224, 123, 57, .35); box-shadow: 0 10px 24px rgba(0,0,0,.35); transition: transform .18s ease; }
     #spitball-list .utility-card.idea:nth-child(odd) { transform: rotate(-1.1deg); }
     #spitball-list .utility-card.idea:nth-child(even) { transform: rotate(.9deg); }
     #spitball-list .utility-card.idea:nth-child(3n) { transform: rotate(-.5deg); }
     #spitball-list .utility-card.idea:hover { transform: rotate(0deg) translateY(-2px); }
-    #spitball-list .utility-card.idea::before { content: ""; position: absolute; top: -11px; left: 50%; width: 74px; height: 20px; transform: translateX(-50%) rotate(-2deg); background: rgba(232, 163, 23, .30); border: 1px solid rgba(232, 163, 23, .45); border-radius: 2px; backdrop-filter: blur(1px); }
     #spitball-list .utility-identity .visual-anchor { border-radius: 50%; background: rgba(224, 123, 57, .16); border-color: rgba(224, 123, 57, .5); color: var(--sec-accent); }
 
     /* ---- TO-DO: "The Queue" — checklist rows, priority edge ---- */
@@ -1702,7 +1702,9 @@
     #favorite-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     #favorite-list .utility-card { padding: 0; overflow: hidden; border-radius: 16px; }
     #favorite-list .utility-identity { grid-template-columns: minmax(0, 1fr); gap: 0; margin: 0; }
-    #favorite-list .visual-anchor { width: 100%; height: 104px; border: 0; border-radius: 0; font-size: 42px; color: rgba(255,255,255,.92); background: linear-gradient(135deg, hsl(var(--anchor-hue, 40), 52%, 36%), hsl(calc(var(--anchor-hue, 40) + 28), 50%, 16%)); }
+    #favorite-list .visual-anchor { width: 100%; height: 104px; border: 0; border-radius: 0; font-size: 42px; color: rgba(255,255,255,.92); background: linear-gradient(135deg, hsl(40, 64%, 44%), hsl(29, 60%, 19%)); }
+    #favorite-list .utility-card:nth-child(odd) .visual-anchor { background: linear-gradient(115deg, hsl(43, 66%, 48%), hsl(27, 58%, 17%)); }
+    #favorite-list .utility-card:nth-child(3n) .visual-anchor { background: linear-gradient(150deg, hsl(37, 60%, 39%), hsl(32, 62%, 22%)); }
     #favorite-list .utility-identity > div { padding: 14px 16px 0; }
     #favorite-list .utility-meta, #favorite-list .utility-card > p { padding: 0 16px; margin: 10px 0 0; }
     #favorite-list .utility-actions { padding: 12px 16px 16px; }
